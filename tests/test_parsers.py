@@ -10,7 +10,7 @@ from src.parsers.resume_parser import ResumeParser
 
 
 class TestJsonParser:
-    """Tests for the JSON source parser."""
+    """Test cases for the JSON source parser."""
 
     def test_parse_sample_file(self, sample_json_path):
         parser = JsonParser()
