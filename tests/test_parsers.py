@@ -30,18 +30,18 @@ class TestJsonParser:
 
     def test_parse_empty_file(self, empty_file):
         parser = JsonParser()
-        records = parser.parse(empty_file)
-        assert records == []
+        with pytest.raises(ValueError):
+            parser.parse(empty_file)
 
     def test_parse_malformed_json(self, malformed_json):
         parser = JsonParser()
-        records = parser.parse(malformed_json)
-        assert records == []
+        with pytest.raises(ValueError):
+            parser.parse(malformed_json)
 
     def test_parse_nonexistent_file(self):
         parser = JsonParser()
-        records = parser.parse(Path("/does/not/exist.json"))
-        assert records == []
+        with pytest.raises(ValueError):
+            parser.parse(Path("/does/not/exist.json"))
 
     def test_source_type(self):
         assert JsonParser().source_type == "json"
@@ -67,8 +67,8 @@ class TestCsvParser:
         # Rename to .csv for detection
         csv_empty = empty_file.parent / "empty.csv"
         csv_empty.write_text("")
-        records = parser.parse(csv_empty)
-        assert records == []
+        with pytest.raises(ValueError):
+            parser.parse(csv_empty)
 
     def test_parse_garbage_csv(self, garbage_csv):
         parser = CsvParser()
@@ -105,8 +105,8 @@ class TestResumeParser:
         f = tmp_path / "empty.txt"
         f.write_text("")
         parser = ResumeParser()
-        records = parser.parse(f)
-        assert records == []
+        with pytest.raises(ValueError):
+            parser.parse(f)
 
     def test_extract_links(self, sample_resume_path):
         parser = ResumeParser()

@@ -73,10 +73,11 @@ class CsvParser(BaseParser):
         try:
             text = file_path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
-            # Fallback encoding for non-UTF-8 files
             try:
                 text = file_path.read_text(encoding="latin-1")
                 logger.warning("Used latin-1 fallback encoding for %s", file_path)
+            except Exception as e:
+                raise ValueError(f"Failed to decode {file_path.name}: {e}")
         except OSError as e:
             raise ValueError(f"Failed to read {file_path.name}: {e}")
 
