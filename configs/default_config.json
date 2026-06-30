@@ -1,5 +1,5 @@
 {
-  "fields": [],
-  "include_confidence": true,
-  "on_missing": "null"
+    "fields": [],
+    "include_confidence": true,
+    "on_missing": "null"
 }
