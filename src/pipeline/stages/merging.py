@@ -313,15 +313,20 @@ def _merge_experience(
                 
                 # Check company match (substring)
                 if c_comp in e_comp or e_comp in c_comp:
-                    # Check title match (shared words)
-                    c_words = set(c_title.split())
-                    e_words = set(e_title.split())
-                    title_match = bool(c_words & e_words)
+                    # Check title match (substring)
+                    title_match = c_title in e_title or e_title in c_title
                     
-                    # Check date match
-                    date_match = (exp.start and existing.start and exp.start == existing.start)
+                    date_match = False
+                    date_conflict = False
                     
-                    if title_match or date_match:
+                    if exp.start and existing.start:
+                        if exp.start == existing.start:
+                            date_match = True
+                        else:
+                            date_conflict = True
+                            
+                    # Duplicate if dates match exactly, or titles match and dates don't contradict
+                    if date_match or (title_match and not date_conflict):
                         is_duplicate = True
                         
                         # Merge missing fields

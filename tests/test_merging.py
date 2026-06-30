@@ -175,3 +175,82 @@ class TestProvenance:
         profiles = merge_records(records)
         sources = [p.source for p in profiles[0].provenance]
         assert "api_data.json" in sources
+
+
+class TestMultiSourceIdentityMerge:
+    """Explicit tests for complex multi-source identity resolution."""
+    
+    def test_multi_source_single_candidate_merge(self):
+        """Test that 5 sources are correctly merged into a single CanonicalProfile."""
+        records = [
+            # 1. JSON (Highest weight, email1)
+            _make_record(
+                source_name="candidate.json",
+                source_weight=0.9,
+                full_name="Hari Teja Patnala",
+                emails=["hari@example.com"],
+                skills=["Python", "React"],
+                experience=[Experience(company="Eightfold", title="SWE Intern")]
+            ),
+            # 2. CSV (Email1 + Email2 overlap)
+            _make_record(
+                source_name="candidate.csv",
+                source_weight=0.7,
+                full_name="Hari T.",
+                emails=["hari@example.com", "hari.teja@gmail.com"],
+                skills=["SQL"]
+            ),
+            # 3. PDF (Email2 overlap)
+            _make_record(
+                source_name="resume.pdf",
+                source_weight=0.6,
+                full_name="Hari Teja",
+                emails=["hari.teja@gmail.com"],
+                skills=["Python", "C++"],
+                education=[Education(institution="LPU", end_year=2024)]
+            ),
+            # 4. GitHub (Name overlap fallback since no email)
+            _make_record(
+                source_name="github.com",
+                source_weight=0.4,
+                full_name="Hari Teja Patnala", # exact match with JSON
+                emails=[],
+                links=Links(github="https://github.com/hariteja-01")
+            ),
+            # 5. LinkedIn (Name overlap fallback)
+            _make_record(
+                source_name="linkedin.com",
+                source_weight=0.3,
+                full_name="Hari Teja Patnala",
+                emails=[],
+                links=Links(linkedin="https://linkedin.com/in/hariteja")
+            ),
+        ]
+        
+        profiles = merge_records(records)
+        
+        # Should be exactly 1 profile due to transitive email and name matches
+        assert len(profiles) == 1, "Failed to merge 5 sources into 1 profile"
+        
+        profile = profiles[0]
+        
+        # Scalar picks highest weight (JSON)
+        assert profile.full_name == "Hari Teja Patnala"
+        
+        # Emails unioned
+        assert set(profile.emails) == {"hari@example.com", "hari.teja@gmail.com"}
+        
+        # Links merged from GitHub and LinkedIn
+        assert profile.links is not None
+        assert profile.links.github == "https://github.com/hariteja-01"
+        assert profile.links.linkedin == "https://linkedin.com/in/hariteja"
+        
+        # Skills unioned
+        skill_names = {s.name for s in profile.skills}
+        assert skill_names == {"Python", "React", "SQL", "C++"}
+        
+        # Experience and Education collected
+        assert len(profile.experience) == 1
+        assert profile.experience[0].company == "Eightfold"
+        assert len(profile.education) == 1
+        assert profile.education[0].institution == "LPU"
