@@ -13,7 +13,6 @@ SOURCE_WEIGHTS: dict[str, float] = {
     "csv": 0.7,    # Manual HR exports — often stale or inconsistent
     "resume": 0.6, # Self-reported, regex-parsed — highest error risk
     "github": 0.4, # GitHub profiles are external and unverified
-    "linkedin": 0.4, # LinkedIn profile URLs are external
 }
 
 # ---------------------------------------------------------------------------

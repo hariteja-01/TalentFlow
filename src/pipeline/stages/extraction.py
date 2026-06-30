@@ -13,7 +13,6 @@ from src.parsers.base import BaseParser
 from src.parsers.csv_parser import CsvParser
 from src.parsers.github_parser import GithubParser
 from src.parsers.json_parser import JsonParser
-from src.parsers.linkedin_parser import LinkedinParser
 from src.parsers.resume_parser import ResumeParser
 from src.utils.logger import get_logger
 
@@ -25,7 +24,6 @@ _PARSERS: dict[str, BaseParser] = {
     "csv": CsvParser(),
     "resume": ResumeParser(),
     "github": GithubParser(),
-    "linkedin": LinkedinParser(),
 }
 
 

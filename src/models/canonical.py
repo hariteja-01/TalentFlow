@@ -20,7 +20,6 @@ class Location(BaseModel):
 class Links(BaseModel):
     """Web presence links for a candidate."""
 
-    linkedin: str | None = None
     github: str | None = None
     portfolio: str | None = None
     other: list[str] = Field(default_factory=list)

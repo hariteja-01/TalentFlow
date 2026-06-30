@@ -216,15 +216,7 @@ class TestMultiSourceIdentityMerge:
                 full_name="Hari Teja Patnala", # exact match with JSON
                 emails=[],
                 links=Links(github="https://github.com/hariteja-01")
-            ),
-            # 5. LinkedIn (Name overlap fallback)
-            _make_record(
-                source_name="linkedin.com",
-                source_weight=0.3,
-                full_name="Hari Teja Patnala",
-                emails=[],
-                links=Links(linkedin="https://linkedin.com/in/hariteja")
-            ),
+            )
         ]
         
         profiles = merge_records(records)
@@ -240,10 +232,9 @@ class TestMultiSourceIdentityMerge:
         # Emails unioned
         assert set(profile.emails) == {"hari@example.com", "hari.teja@gmail.com"}
         
-        # Links merged from GitHub and LinkedIn
+        # Links merged from GitHub
         assert profile.links is not None
         assert profile.links.github == "https://github.com/hariteja-01"
-        assert profile.links.linkedin == "https://linkedin.com/in/hariteja"
         
         # Skills unioned
         skill_names = {s.name for s in profile.skills}
@@ -256,41 +247,31 @@ class TestMultiSourceIdentityMerge:
         assert profile.education[0].institution == "LPU"
 
     def test_url_overlap_identity_merge(self):
-        """Test that records are merged if they share a GitHub or LinkedIn URL, even without emails."""
+        """Test that records are merged if they share a GitHub URL, even without emails."""
         github_url = "https://github.com/hariteja-01"
-        linkedin_url = "https://linkedin.com/in/hariteja"
 
-        # Record 1: Resume with slightly different name, no email, but has LinkedIn
+        # Record 1: Resume with slightly different name, no email, but has GitHub
         r1 = _make_record(
             source_name="resume.pdf",
             source_weight=0.6,
             full_name="Hari Teja P.",
             emails=[],
-            links=Links(linkedin=linkedin_url, github=None, portfolio=None, other=[])
+            links=Links(github=github_url, portfolio=None, other=[])
         )
 
-        # Record 2: LinkedIn profile scrape with same LinkedIn URL and a Github URL
+        # Record 2: JSON scrape with same GitHub URL
         r2 = _make_record(
-            source_name="linkedin_scrape",
+            source_name="github_scrape",
             source_weight=0.9,
             full_name="Hari Teja Patnala",
             emails=[],
-            links=Links(linkedin=linkedin_url, github=github_url, portfolio=None, other=[])
+            links=Links(github=github_url, portfolio=None, other=[])
         )
 
-        # Record 3: GitHub API response with just the Github URL
-        r3 = _make_record(
-            source_name="github_api",
-            source_weight=0.4,
-            full_name="hariteja-01",
-            emails=[],
-            links=Links(linkedin=None, github=github_url, portfolio=None, other=[])
-        )
-
-        records = [r1, r2, r3]
+        records = [r1, r2]
         merged_profiles = merge_records(records)
 
-        # All three should be merged into exactly 1 profile
+        # Both should be merged into exactly 1 profile
         assert len(merged_profiles) == 1
         profile = merged_profiles[0]
         
@@ -298,4 +279,3 @@ class TestMultiSourceIdentityMerge:
         assert profile.full_name == "Hari Teja Patnala"
         # Links should be unioned
         assert profile.links.github == github_url
-        assert profile.links.linkedin == linkedin_url

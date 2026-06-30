@@ -118,7 +118,6 @@ class TestResumeParser:
         parser = ResumeParser()
         records = parser.parse(sample_resume_path)
         assert records[0].links is not None
-        assert "linkedin" in records[0].links.linkedin.lower()
         assert "github" in records[0].links.github.lower()
 
     def test_extract_skills(self, sample_resume_path):

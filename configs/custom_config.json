@@ -5,7 +5,6 @@
     {"path": "phone", "from": "phones[0]", "type": "string", "normalize": "E164"},
     {"path": "city", "from": "location.city", "type": "string"},
     {"path": "country", "from": "location.country", "type": "string"},
-    {"path": "linkedin", "from": "links.linkedin", "type": "string"},
     {"path": "headline", "type": "string"},
     {"path": "years_experience", "type": "number"},
     {"path": "skills", "from": "skills[].name", "type": "string[]", "normalize": "canonical"}

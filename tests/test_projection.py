@@ -15,7 +15,7 @@ def _make_profile(**kwargs) -> CanonicalProfile:
         "emails": ["jane@example.com", "jane2@example.com"],
         "phones": ["+14155552671"],
         "location": Location(city="San Francisco", region="California", country="US"),
-        "links": Links(linkedin="https://linkedin.com/in/janedoe", github="https://github.com/janedoe"),
+        "links": Links(github="https://github.com/janedoe"),
         "headline": "ML Engineer",
         "years_experience": 7.0,
         "skills": [
@@ -79,13 +79,6 @@ class TestPathRemapping:
         result = project_profile(_make_profile(), config)
         assert result["skill_names"] == ["Python", "Docker"]
 
-    def test_remap_linkedin(self):
-        config = OutputConfig(
-            fields=[FieldConfig(path="linkedin", from_path="links.linkedin", type="string")],
-            include_confidence=False,
-        )
-        result = project_profile(_make_profile(), config)
-        assert "linkedin.com" in result["linkedin"]
 
 
 class TestMissingValuePolicies:

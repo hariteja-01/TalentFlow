@@ -26,19 +26,17 @@ def detect_source_type(file_path: Path) -> str | None:
     """Detect the source type from a file's extension.
 
     Returns:
-        Source type string ("json", "csv", "resume", "github", "linkedin"), or None if unsupported.
+        Source type string ("json", "csv", "resume", "github"), or None if unsupported.
     """
     ext = file_path.suffix.lower()
     source_type = _EXTENSION_MAP.get(ext)
 
-    # Special handling for text files: might be a resume, github urls, or linkedin urls
+    # Special handling for text files: might be a resume or github urls
     if source_type == "resume" and ext == ".txt":
         try:
             content = file_path.read_text(encoding="utf-8").lower()
             if "github.com/" in content:
                 source_type = "github"
-            elif "linkedin.com/in/" in content:
-                source_type = "linkedin"
         except Exception:
             pass  # Fall back to resume if unreadable
 

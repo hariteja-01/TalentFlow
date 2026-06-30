@@ -24,12 +24,6 @@
       "on_missing": "error"
     },
     {
-      "path": "linkedin_url",
-      "from": "links.linkedin",
-      "type": "string",
-      "on_missing": "error"
-    },
-    {
       "path": "github_url",
       "from": "links.github",
       "type": "string",

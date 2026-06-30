@@ -60,7 +60,6 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
     name_to_group: dict[str, str] = {}
     # Track URL-based groups as fallback
     github_to_group: dict[str, str] = {}
-    linkedin_to_group: dict[str, str] = {}
 
     for record in records:
         # Try to find an existing group via email overlap
@@ -77,16 +76,12 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
             if name_key in name_to_group:
                 matching_group = name_to_group[name_key]
 
-        # Fallback 2: try URL overlap (GitHub or LinkedIn)
+        # Fallback 2: try URL overlap (GitHub)
         if matching_group is None and record.links:
             if record.links.github:
                 gh_lower = record.links.github.strip().lower().rstrip('/')
                 if gh_lower in github_to_group:
                     matching_group = github_to_group[gh_lower]
-            if matching_group is None and record.links.linkedin:
-                li_lower = record.links.linkedin.strip().lower().rstrip('/')
-                if li_lower in linkedin_to_group:
-                    matching_group = linkedin_to_group[li_lower]
 
         # Create new group if no match found
         if matching_group is None:
@@ -105,9 +100,6 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
             if record.links.github:
                 gh_lower = record.links.github.strip().lower().rstrip('/')
                 github_to_group[gh_lower] = matching_group
-            if record.links.linkedin:
-                li_lower = record.links.linkedin.strip().lower().rstrip('/')
-                linkedin_to_group[li_lower] = matching_group
 
         groups[matching_group].append(record)
 
@@ -222,40 +214,31 @@ def _pick_location(
     return None
 
 
-def _merge_links(
-    records: list[IntermediateRecord],
-    provenance: list[Provenance],
-) -> Links | None:
-    """Merge links across all sources, preferring first non-None value."""
-    linkedin = github = portfolio = None
-    other: list[str] = []
+def _merge_links(records: list[IntermediateRecord], provenance: list[Provenance]) -> Links | None:
+    """Union links from all sources."""
+    github = portfolio = None
+    other = []
 
     for record in records:
         if not record.links:
             continue
-        if not linkedin and record.links.linkedin:
-            linkedin = record.links.linkedin
-            provenance.append(Provenance(
-                field="links.linkedin", source=record.source_name, method="merged-first-seen",
-            ))
+
         if not github and record.links.github:
             github = record.links.github
-            provenance.append(Provenance(
-                field="links.github", source=record.source_name, method="merged-first-seen",
-            ))
+            provenance.append(Provenance(field="links.github", source=record.source_name, method="merged-first-found"))
+        
         if not portfolio and record.links.portfolio:
             portfolio = record.links.portfolio
-            provenance.append(Provenance(
-                field="links.portfolio", source=record.source_name, method="merged-first-seen",
-            ))
-        for url in record.links.other:
-            if url not in other:
-                other.append(url)
+            provenance.append(Provenance(field="links.portfolio", source=record.source_name, method="merged-first-found"))
+            
+        for link in record.links.other:
+            if link not in other:
+                other.append(link)
 
-    if not any([linkedin, github, portfolio, other]):
+    if not any([github, portfolio, other]):
         return None
 
-    return Links(linkedin=linkedin, github=github, portfolio=portfolio, other=other)
+    return Links(github=github, portfolio=portfolio, other=other)
 
 
 def _merge_list_field(

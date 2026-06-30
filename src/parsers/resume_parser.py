@@ -272,7 +272,6 @@ class ResumeParser(BaseParser):
             return None
 
         return Links(
-            linkedin=linkedin.group(0) if linkedin else None,
             github=github.group(0) if github else None,
             portfolio=portfolio,
         )

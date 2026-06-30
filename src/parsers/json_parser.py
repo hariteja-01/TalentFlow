@@ -201,7 +201,6 @@ class JsonParser(BaseParser):
             links_data = data.get("links")
             if isinstance(links_data, dict):
                 links = Links(
-                    linkedin=links_data.get("linkedin"),
                     github=links_data.get("github"),
                     portfolio=links_data.get("portfolio"),
                     other=links_data.get("other", []),
@@ -220,7 +219,7 @@ class JsonParser(BaseParser):
                         else:
                             other.append(url)
                 if any([linkedin, github, other]):
-                    links = Links(linkedin=linkedin, github=github, portfolio=portfolio, other=other)
+                    links = Links(github=github, portfolio=portfolio, other=other)
 
             # Extract experience — with sub-field mapping
             experience = []

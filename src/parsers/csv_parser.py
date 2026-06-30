@@ -177,7 +177,6 @@ class CsvParser(BaseParser):
             links = None
             if any(k in fields for k in ("linkedin", "github", "portfolio")):
                 links = Links(
-                    linkedin=fields.get("linkedin"),
                     github=fields.get("github"),
                     portfolio=fields.get("portfolio"),
                 )
