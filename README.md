@@ -29,7 +29,7 @@ Built to satisfy the Eightfold Candidate Profile Transformer problem statement, 
 
 ## 💡 Project Motivation
 **Why TalentFlow exists?**
-Modern HR teams grapple with fragmented candidate data scattered across Applicant Tracking Systems (ATS), Human Resource Information Systems (HRIS), and raw PDFs. TalentFlow was created to solve the "Identity Resolution & Normalization" problem—ensuring that a candidate who applies via LinkedIn, gets sourced via a CSV export, and uploads a PDF resume is recognized as the *same* candidate, with their skills, experience, and contact info intelligently unified.
+Modern HR teams grapple with fragmented candidate data scattered across Applicant Tracking Systems (ATS), Human Resource Information Systems (HRIS), and raw PDFs. TalentFlow was created to solve the "Identity Resolution & Normalization" problem ensuring that a candidate who applies via LinkedIn, gets sourced via a CSV export, and uploads a PDF resume is recognized as the *same* candidate, with their skills, experience, and contact info intelligently unified.
 
 ## ✨ Key Features
 - **Multi-Source Ingestion**: Safely parses JSON, CSV, PDF, DOCX, and TXT files.
