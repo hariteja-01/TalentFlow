@@ -6,8 +6,9 @@ pycountry>=23.12
 python-dateutil<3,>=2.8
 fastapi>=0.100.0
 python-multipart>=0.0.6,<3
-pymupdf>=1.23.0
-python-docx>=1.1.0
+# Extraction & Parsing
+pypdf==5.9.0
+python-docx==1.1.20
 
 # Development and testing dependencies
 pytest>=7.4,<9

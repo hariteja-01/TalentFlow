@@ -37,31 +37,38 @@ def extract_records(
         Tuple of (records, warnings).
         Failed files are skipped, never crash the pipeline, but produce a warning.
     """
+    import concurrent.futures
+
     all_records: list[IntermediateRecord] = []
     warnings: list[str] = []
 
-    for file_path, source_type in files:
+    def _parse_single(file_path: Path, source_type: str) -> tuple[list[IntermediateRecord] | None, str | None]:
         parser = _PARSERS.get(source_type)
         if parser is None:
-            logger.error("No parser registered for source type '%s'", source_type)
-            continue
+            return None, f"No parser registered for source type '{source_type}'"
 
         try:
             records = parser.parse(file_path)
-            all_records.extend(records)
-            logger.debug(
-                "Extracted %d records from %s (%s)", len(records), file_path.name, source_type
-            )
+            logger.debug("Extracted %d records from %s (%s)", len(records), file_path.name, source_type)
+            return records, None
         except ValueError as e:
-            msg = f"Failed to parse {file_path.name}: {e}"
-            logger.error(msg)
-            warnings.append(msg)
-            continue
+            return None, f"Failed to parse {file_path.name}: {e}"
         except Exception as e:
-            msg = f"Unexpected error parsing {file_path.name}: {e}"
-            logger.error(msg)
-            warnings.append(msg)
-            continue
+            return None, f"Unexpected error parsing {file_path.name}: {e}"
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        future_to_file = {
+            executor.submit(_parse_single, file_path, source_type): file_path
+            for file_path, source_type in files
+        }
+
+        for future in concurrent.futures.as_completed(future_to_file):
+            records, warning = future.result()
+            if records:
+                all_records.extend(records)
+            if warning:
+                logger.error(warning)
+                warnings.append(warning)
 
     logger.info("Extracted %d total records from %d files", len(all_records), len(files))
     return all_records, warnings
