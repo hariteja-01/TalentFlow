@@ -88,7 +88,7 @@ pip install -e .
 ### CLI Usage - Default Schema
 ```bash
 # Process sample inputs with default output schema
-talentflow -i sample_inputs/ -o sample_outputs/default_output.json
+python -m src.cli --input sample_inputs/ --output sample_outputs/default_output.json
 
 # View the output
 cat sample_outputs/default_output.json
@@ -97,13 +97,13 @@ cat sample_outputs/default_output.json
 ### CLI Usage - Custom Configs
 ```bash
 # Minimal profile (name, email, skills only)
-talentflow -i sample_inputs/ -o sample_outputs/minimal_profile.json -c configs/minimal_profile.json
+python -m src.cli --input sample_inputs/ --output sample_outputs/minimal_profile.json --config configs/minimal_profile.json
 
 # Recruiter view (optimized for recruiter dashboard)
-talentflow -i sample_inputs/ -o sample_outputs/recruiter_view.json -c configs/recruiter_view.json
+python -m src.cli --input sample_inputs/ --output sample_outputs/recruiter_view.json --config configs/recruiter_view.json
 
 # No confidence scores
-talentflow -i sample_inputs/ -o sample_outputs/no_confidence.json -c configs/no_confidence.json
+python -m src.cli --input sample_inputs/ --output sample_outputs/no_confidence.json --config configs/no_confidence.json
 ```
 
 ### Web UI
