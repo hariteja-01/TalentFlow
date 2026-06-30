@@ -131,7 +131,7 @@ class CsvParser(BaseParser):
             # Build a field-value dict from the mapped columns
             fields: dict[str, str] = {}
             for col_name, field_name in column_map.items():
-                value = row.get(col_name, "").strip()
+                value = str(row.get(col_name) or "").strip()
                 if value:
                     fields[field_name] = value
 
