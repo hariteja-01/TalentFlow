@@ -226,7 +226,7 @@ The API and Web UI are fully prepared for serverless deployment on **Vercel**.
 
 ## 🧪 Testing
 
-The repository maintains an extensive test suite verifying parsers, normalizers, edge cases, deterministic merging, and e2e integration.
+The repository maintains an extensive test suite verifying parsers, normalizers, edge cases, deterministic merging, and end-to-end integration.
 
 ```bash
 pytest tests/ -v
