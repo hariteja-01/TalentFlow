@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -12,7 +12,7 @@ from pathlib import Path
 # Add src to python path for Vercel imports if necessary
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.pipeline.orchestrator import run_pipeline
+from src.pipeline.orchestrator import run_pipeline, load_config
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -69,6 +69,15 @@ def list_samples():
                 samples.append(str(rel_path).replace('\\', '/'))
     return {"samples": samples}
 
+@app.get("/api/configs")
+def list_configs():
+    config_dir = Path(__file__).parent.parent / "configs"
+    configs = []
+    if config_dir.exists():
+        for file in config_dir.glob("*.json"):
+            configs.append(file.name)
+    return {"configs": configs}
+
 @app.get("/api/samples/{file_path:path}")
 def get_sample(file_path: str):
     sample_dir = Path(__file__).parent.parent / "sample_inputs"
@@ -114,7 +123,7 @@ def validate_file_content(content: bytes, ext: str) -> bool:
     return False
 
 @app.post("/api/process")
-async def process_files(files: list[UploadFile] = File(...)):
+async def process_files(files: list[UploadFile] = File(...), config_name: str = Form(None)):
     if not files:
         raise HTTPException(status_code=400, detail="No files provided")
     
@@ -127,13 +136,8 @@ async def process_files(files: list[UploadFile] = File(...)):
                 raise HTTPException(status_code=400, detail=f"Unsupported file extension: {ext}")
 
             content = await file.read()
-            if len(content) == 0:
-                raise HTTPException(status_code=400, detail=f"File {file.filename} is empty")
             if len(content) > MAX_FILE_SIZE:
                 raise HTTPException(status_code=413, detail=f"File {file.filename} exceeds maximum size of 10MB")
-                
-            if not validate_file_content(content, ext):
-                raise HTTPException(status_code=400, detail=f"File content does not match extension or is corrupted: {file.filename}")
                 
             import uuid
             safe_filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
@@ -142,8 +146,14 @@ async def process_files(files: list[UploadFile] = File(...)):
                 f.write(content)
         
         try:
+            config = None
+            if config_name:
+                config_path = Path(__file__).parent.parent / "configs" / config_name
+                if config_path.exists():
+                    config = load_config(config_path)
+
             # Run the pipeline on the temporary directory
-            result = run_pipeline([tmp_path])
+            result = run_pipeline([tmp_path], config)
             
             # Serialize the resulting Pydantic models to dictionaries
             return JSONResponse(content={

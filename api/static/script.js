@@ -15,6 +15,7 @@ const userNameInput = document.getElementById('userNameInput');
 const sidebarUserName = document.getElementById('sidebarUserName');
 const sidebarAvatarInitials = document.getElementById('sidebarAvatarInitials');
 const sampleSelect = document.getElementById('sampleSelect');
+const configSelect = document.getElementById('configSelect');
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 const fileList = document.getElementById('fileList');
@@ -119,6 +120,25 @@ async function fetchSamplesList() {
         }
     } catch (err) {
         console.error("Failed to load sample list", err);
+    }
+}
+
+async function fetchConfigsList() {
+    try {
+        const response = await fetch('/api/configs');
+        if (response.ok) {
+            const data = await response.json();
+            data.configs.forEach(configName => {
+                const opt = document.createElement('option');
+                opt.value = configName;
+                opt.textContent = configName;
+                if (configSelect) {
+                    configSelect.appendChild(opt);
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load configs list", err);
     }
 }
 
@@ -288,6 +308,9 @@ async function processFiles() {
     selectedFiles.forEach(file => {
         formData.append('files', file);
     });
+    if (configSelect && configSelect.value) {
+        formData.append('config_name', configSelect.value);
+    }
 
     try {
         const response = await fetch('/api/process', {
@@ -426,6 +449,7 @@ function copyJson(idx) {
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
     fetchSamplesList();
+    fetchConfigsList();
     if (fileInput) {
         fileInput.value = '';
     }
