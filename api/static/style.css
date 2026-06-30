@@ -231,6 +231,13 @@ main {
     overflow: hidden;
     flex-shrink: 0;
     box-shadow: var(--glass-shadow);
+    cursor: pointer;
+}
+
+.upload-card:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), var(--glass-shadow);
 }
 
 .upload-card::before {

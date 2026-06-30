@@ -67,24 +67,22 @@
             <button class="btn-outline" style="padding: 0.875rem 1.5rem; margin-bottom: 0;" onclick="loadSampleFile()">Load Sample</button>
         </div>
 
-        <div class="upload-card" id="dropzone">
-            <div class="upload-icon">✨</div>
-            <h3 class="upload-text">Drag & Drop candidate files here</h3>
+        <section class="upload-card" id="dropzone" tabindex="0" role="button" aria-label="Upload candidate files via Drag & Drop or Click" onclick="document.getElementById('fileInput').click()" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('fileInput').click(); }">
+            <div class="upload-icon" aria-hidden="true">✨</div>
+            <h3 class="upload-text">Drag & Drop or Click to Upload</h3>
             <p class="upload-subtext">Supports .json, .csv, .txt, .pdf, and .docx</p>
             
-            <input type="file" id="fileInput" multiple accept=".json,.csv,.txt,.pdf,.docx">
-            <button class="btn" onclick="document.getElementById('fileInput').click()">
-                Select Files
-            </button>
+            <input type="file" id="fileInput" multiple accept=".json,.csv,.txt,.pdf,.docx" aria-hidden="true" tabindex="-1">
             
-            <div class="file-list" id="fileList"></div>
+            <!-- Stop propagation so interacting with lists/buttons doesn't trigger upload -->
+            <div class="file-list" id="fileList" onclick="event.stopPropagation()"></div>
             
-            <button class="btn" id="processBtn" style="display: none; margin-top: 2rem; width: 100%; max-width: 600px;" onclick="processFiles()">
+            <button class="btn" id="processBtn" style="display: none; margin-top: 2rem; width: 100%; max-width: 600px;" onclick="event.stopPropagation(); processFiles()" aria-label="Run Transformation Pipeline">
                 🚀 Run Transformation Pipeline
             </button>
 
-            <div class="error-message" id="errorMessage"></div>
-        </div>
+            <div class="error-message" id="errorMessage" aria-live="polite"></div>
+        </section>
 
         <div class="loading-container" id="loadingContainer">
             <div class="spinner"></div>
