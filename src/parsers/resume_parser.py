@@ -116,14 +116,9 @@ class ResumeParser(BaseParser):
         
         try:
             if ext == ".pdf":
-                from pypdf import PdfReader
-                try:
-                    reader = PdfReader(file_path)
-                    text = "\n".join(page.extract_text() or "" for page in reader.pages)
-                except Exception as e:
-                    if "encrypt" in str(e).lower() or "password" in str(e).lower():
-                        raise ValueError(f"Encrypted PDF not supported: {file_path.name}")
-                    raise ValueError(f"Failed to read PDF {file_path.name}: {e}")
+                import fitz
+                with fitz.open(file_path) as doc:
+                    text = "\n".join(page.get_text() for page in doc)
             elif ext == ".docx":
                 import docx
                 doc = docx.Document(file_path)

@@ -149,7 +149,8 @@ function handleFiles(files) {
     selectedFiles = [...selectedFiles, ...newFiles];
     updateFileList();
     if (selectedFiles.length > 0) {
-        processBtn.style.display = 'flex';
+        processBtn.style.display = 'none'; // Auto process, so we hide the button
+        processFiles(); // Instantly process!
     } else {
         processBtn.style.display = 'none';
     }
