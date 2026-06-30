@@ -64,10 +64,20 @@ def extract_records(
             warning = f"Failed to parse {file_path.name}: {e}"
             logger.error(warning)
             warnings.append(warning)
+            all_records.append(IntermediateRecord(
+                source_name=file_path.name,
+                source_type=source_type,
+                source_weight=0.0
+            ))
         except Exception as e:
             warning = f"Unexpected error parsing {file_path.name}: {e}"
             logger.error(warning)
             warnings.append(warning)
+            all_records.append(IntermediateRecord(
+                source_name=file_path.name,
+                source_type=source_type,
+                source_weight=0.0
+            ))
 
     logger.info("Extracted %d total records from %d files", len(all_records), len(files))
     return all_records, warnings
