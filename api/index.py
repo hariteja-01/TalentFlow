@@ -158,6 +158,7 @@ async def process_files(files: list[UploadFile] = File(...), config_name: str = 
             # Serialize the resulting Pydantic models to dictionaries
             return JSONResponse(content={
                 "profiles": [json.loads(p.model_dump_json()) for p in result.profiles],
+                "projected": result.projected,
                 "warnings": result.warnings
             })
         except Exception as e:

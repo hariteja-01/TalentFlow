@@ -324,7 +324,7 @@ async function processFiles() {
             throw new Error(data.detail || 'Failed to process files');
         }
 
-        renderProfiles(data.profiles);
+        renderProfiles(data.profiles, data.projected);
         loadingContainer.style.display = 'none';
         resultsContainer.style.display = 'block';
         
@@ -343,7 +343,7 @@ async function processFiles() {
     }
 }
 
-function renderProfiles(profiles) {
+function renderProfiles(profiles, projected) {
     if (profiles.length === 0) {
         profileGrid.innerHTML = '<p style="color:var(--text-muted)">No profiles were extracted.</p>';
         return;
@@ -372,6 +372,9 @@ function renderProfiles(profiles) {
         } else {
             skillsHtml = '<span style="color:var(--text-muted);font-size:0.85rem">No skills</span>';
         }
+
+        const profileJsonToDisplay = (projected && projected[idx]) ? projected[idx] : profile;
+        const filenameToDisplay = (projected && projected[idx]) ? 'custom_profile.json' : 'canonical_profile.json';
 
         card.innerHTML = `
             <div class="card-header">
@@ -406,10 +409,10 @@ function renderProfiles(profiles) {
             </div>
             <div class="raw-json-container" id="raw-json-${idx}">
                 <div class="json-header">
-                    <span>canonical_profile.json</span>
+                    <span>${filenameToDisplay}</span>
                     <button class="copy-btn" onclick="copyJson(${idx})" title="Copy to clipboard">📋 Copy</button>
                 </div>
-                <pre class="raw-json">${escapeHtml(JSON.stringify(profile, null, 2))}</pre>
+                <pre class="raw-json">${escapeHtml(JSON.stringify(profileJsonToDisplay, null, 2))}</pre>
             </div>
         `;
         
