@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Passing">
   
   <p align="center">
-    <h3>🌐 <a href="https://talent-flow-gules.vercel.app/">Live Demo</a> | 📂 <a href="https://github.com/hariteja-01/TalentFlow">GitHub Repository</a></h3>
+    <h3>🌐 <a href="https://talent-flow-gules.vercel.app/">Live Demo</a> | 🎥 <a href="#">Demo Video (Coming Soon)</a> | 📂 <a href="https://github.com/hariteja-01/TalentFlow">GitHub Repository</a></h3>
   </p>
 </div>
 
