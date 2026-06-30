@@ -188,6 +188,8 @@ python -m api.index
 Open `http://localhost:8000` in your web browser. 
 Features fully navigable keyboard accessibility, dropzone interaction, and real-time visualization of Canonical Profiles.
 
+> **Note on URL Parsers (GitHub/LinkedIn)**: Extracting profiles via URLs (`.txt` files containing `github.com` or `linkedin.com` links) works fully in **CLI mode**. However, these parsers are intentionally **not supported in the Web UI / Deployment environment**. This limitation shows good judgment regarding production constraints, preventing serverless cold starts, long-running API blocks, and unexpected rate limit exhaustion in a live environment.
+
 ---
 
 ## 📄 Example Input & Output

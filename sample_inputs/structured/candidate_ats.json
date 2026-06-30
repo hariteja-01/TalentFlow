@@ -1,0 +1,85 @@
+{
+  "applicants": [
+    {
+      "applicant_name": "Jane M. Doe",
+      "contact_email": ["jane.doe@email.com", "jane@techcorp.com"],
+      "contact_phone": ["+1 (415) 555-2671"],
+      "address": {
+        "city": "San Francisco",
+        "state": "CA",
+        "country": "US"
+      },
+      "social_profiles": {
+        "linkedin": "https://linkedin.com/in/janedoe"
+      },
+      "current_position": "Senior Machine Learning Engineer",
+      "total_experience": 7,
+      "technical_skills": [
+        {"name": "Python"},
+        {"name": "Machine Learning"},
+        {"name": "TensorFlow"},
+        {"name": "Docker"},
+        {"name": "SQL"}
+      ],
+      "employment_history": [
+        {
+          "organization": "TechCorp",
+          "role": "Senior ML Engineer",
+          "from": "2020-01",
+          "to": null,
+          "responsibilities": "Leading ML platform development, model training pipelines, and feature store infrastructure."
+        },
+        {
+          "organization": "TechCorp",
+          "role": "ML Engineer",
+          "from": "2018-06",
+          "to": "2019-12",
+          "responsibilities": "Built recommendation models and real-time inference services."
+        }
+      ],
+      "academic_background": [
+        {
+          "school": "Stanford University",
+          "qualification": "MS",
+          "major": "Computer Science",
+          "graduation_year": 2018
+        }
+      ]
+    },
+    {
+      "applicant_name": "John Smith",
+      "contact_email": "john.smith@example.com",
+      "contact_phone": ["+44 20 7946 0958"],
+      "address": {
+        "city": "London",
+        "country": "UK"
+      },
+      "current_position": "Full Stack Developer",
+      "total_experience": 4,
+      "technical_skills": [
+        {"name": "JavaScript"},
+        {"name": "React"},
+        {"name": "Node.js"},
+        {"name": "PostgreSQL"},
+        {"name": "AWS"}
+      ],
+      "employment_history": [
+        {
+          "organization": "WebCo Ltd",
+          "role": "Full Stack Developer",
+          "from": "2021-03",
+          "to": null,
+          "responsibilities": "Building scalable web applications with React and Node.js."
+        }
+      ],
+      "academic_background": [
+        {
+          "school": "Imperial College London",
+          "qualification": "BSc",
+          "major": "Computing",
+          "graduation_year": 2020
+        }
+      ]
+    }
+  ]
+}

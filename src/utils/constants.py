@@ -12,6 +12,8 @@ SOURCE_WEIGHTS: dict[str, float] = {
     "json": 0.9,   # Structured API/ATS data — usually authoritative
     "csv": 0.7,    # Manual HR exports — often stale or inconsistent
     "resume": 0.6, # Self-reported, regex-parsed — highest error risk
+    "github": 0.4, # GitHub profiles are external and unverified
+    "linkedin": 0.4, # LinkedIn profile URLs are external
 }
 
 # ---------------------------------------------------------------------------

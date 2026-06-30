@@ -1,0 +1,55 @@
+{
+  "fields": [
+    {
+      "path": "id",
+      "from": "candidate_id",
+      "type": "string"
+    },
+    {
+      "path": "name",
+      "from": "full_name",
+      "type": "string"
+    },
+    {
+      "path": "email",
+      "from": "emails[0]",
+      "type": "string",
+      "on_missing": "error"
+    },
+    {
+      "path": "phone",
+      "from": "phones[0]",
+      "type": "string",
+      "normalize": "E164",
+      "on_missing": "error"
+    },
+    {
+      "path": "linkedin_url",
+      "from": "links.linkedin",
+      "type": "string",
+      "on_missing": "error"
+    },
+    {
+      "path": "github_url",
+      "from": "links.github",
+      "type": "string",
+      "on_missing": "omit"
+    },
+    {
+      "path": "years_of_experience",
+      "from": "years_experience",
+      "type": "float",
+      "on_missing": "error"
+    },
+    {
+      "path": "skills",
+      "from": "skills[].name",
+      "type": "array",
+      "normalize": "canonical",
+      "on_missing": "error"
+    }
+  ],
+  "include_confidence": true,
+  "include_provenance": true,
+  "on_missing": "error"
+}

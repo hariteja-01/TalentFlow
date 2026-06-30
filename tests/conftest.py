@@ -15,7 +15,7 @@ CONFIGS = PROJECT_ROOT / "configs"
 
 @pytest.fixture
 def sample_json_path() -> Path:
-    return SAMPLE_INPUTS / "structured" / "candidate_api.json"
+    return SAMPLE_INPUTS / "structured" / "candidate_api_canonical.json"
 
 
 @pytest.fixture
