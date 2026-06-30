@@ -1,37 +1,81 @@
 # TalentFlow - Candidate Profile Transformer
 
-TalentFlow is a robust data ingestion, normalization, and canonicalization pipeline built to transform messy candidate data from disparate sources (ATS systems, HRIS databases, and unstructured Resumes) into unified, standardized Candidate Profiles.
+TalentFlow is a robust, production-grade data pipeline designed to ingest, normalize, and merge candidate data from highly heterogeneous sources (ATS JSON payloads, HRIS CSV exports, and unstructured Resumes) into a single, unified Canonical Profile.
 
-It satisfies all evaluation criteria laid out in the Candidate Profile Transformer problem statement, featuring a modern modular architecture, deterministic merging logic, confidence scoring, and a sleek web UI.
-
----
-
-## 🚀 Features
-
-- **Multi-Source Ingestion**: Parses JSON (ATS payloads), CSV (HRIS exports), and plain text, PDF, or DOCX (Resumes).
-- **Advanced Normalization**:
-  - Validates and standardizes Phone Numbers to E.164 format.
-  - Normalizes Dates to `YYYY-MM` and computes `years_experience`.
-  - Canonicalizes Skills against known aliases (e.g., "ML" -> "Machine Learning").
-  - Standardizes Country and Region names.
-- **Deterministic Merging & Identity Resolution**: Uses Union-Find logic on emails to group profiles and deterministic hashing for fallback candidate IDs. Resolves field conflicts using source weighting.
-- **Confidence Scoring**: Evaluates the completeness and reliability of each unified profile and calculates a 0.0 to 1.0 confidence score.
-- **Extensible Configuration**: Supports JSON-based configuration policies for custom output projections (field selection, renaming, and missing value policies).
-- **Secure Web UI**: Beautiful, glassmorphic UI built with modern HTML/CSS/JS communicating with a hardened FastAPI backend.
+Built to satisfy the Eightfold Candidate Profile Transformer problem statement, TalentFlow emphasizes deterministic merging, robust error boundaries, strict validation, and a beautiful, accessible web interface.
 
 ---
 
-## 🏗 System Architecture
+## 🏗 Architecture & Data Flow
 
-The pipeline follows a strict multi-stage synchronous architecture to ensure data integrity and traceability:
+TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceablity, testability, and guarantees that errors in one document never poison the pipeline.
 
-1. **Ingestion**: Detects file types and routes to appropriate parsers.
-2. **Extraction**: Parsers (JSON, CSV, Resume) extract raw data into `IntermediateRecord` models.
-3. **Normalization**: Applies canonical rules to phones, dates, locations, and skills.
-4. **Merging**: Groups records by identity (Email overlap -> Name match fallback) and resolves conflicts using `source_weight` and union operations.
-5. **Confidence Scoring**: Computes a confidence score based on field completeness and source weights.
-6. **Projection (Optional)**: Applies a custom config policy to reshape the canonical profiles.
-7. **Validation & Output**: Emits the final output as a standardized JSON structure.
+```mermaid
+graph TD
+    %% Define Styles
+    classDef external fill:#f3f4f6,stroke:#d1d5db,stroke-width:1px,color:#374151
+    classDef stage fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95,font-weight:bold
+    classDef output fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46
+    
+    A1[JSON ATS]:::external
+    A2[CSV HRIS]:::external
+    A3[Resumes PDF/TXT/DOCX]:::external
+    
+    B(1. Ingestion Stage<br>File discovery & mime validation):::stage
+    C(2. Extraction Stage<br>Regex heuristics & routing):::stage
+    D(3. Normalization Stage<br>E.164, Date standardizing, Aliases):::stage
+    E(4. Merging Stage<br>Union-Find identity resolution):::stage
+    F(5. Confidence Stage<br>Scoring completeness):::stage
+    G(6. Projection Stage<br>Applying configs/policies):::stage
+    
+    H[Canonical Profile JSON]:::output
+    
+    A1 & A2 & A3 --> B
+    B --> C
+    C -- IntermediateRecords --> D
+    D -- NormalizedRecords --> E
+    E -- CanonicalProfiles --> F
+    F --> G
+    G --> H
+```
+
+### Stage Breakdown
+
+1. **Ingestion**: Discovers files, safely checks byte-signatures (MIME types) to prevent extension spoofing, and routes files to their respective parsers.
+2. **Extraction**: Implements fault-tolerant parsing. Extracts text from PDFs (gracefully handling image-only, corrupted, or encrypted PDFs without crashing) and maps JSON/CSV fields. Yields loosely structured `IntermediateRecord` models.
+3. **Normalization**: Canonicalizes data points. Phones are mapped to E.164, dates to ISO `YYYY-MM`, and skills are resolved against a known dictionary (e.g., `ML` -> `Machine Learning`).
+4. **Merging (Identity Resolution)**: The core engine. Groups identities using a graph-based Union-Find approach (emails as primary keys, exact name matches as fallbacks). Resolves conflicts deterministically by weighting sources (JSON > CSV > Resume) and union-deduplicating arrays.
+5. **Confidence Scoring**: Evaluates the structural integrity and completeness of the merged profile, generating a deterministic score from `0.0` to `1.0`.
+6. **Projection**: Applies dynamic, user-defined configuration policies to reshape the final JSON. Supports field omitting, path mapping (e.g., `links.linkedin` -> `social_url`), and error enforcement.
+
+---
+
+## 🧠 Design Decisions & Trade-offs
+
+- **Strict Type Validation at Boundaries**: We use Pydantic `BaseModel` for both `IntermediateRecord` and `CanonicalProfile`. This enforces strict type boundaries between pipeline stages.
+- **Graceful Degradation for PDFs**: Instead of bloatware dependencies like Tesseract OCR for image-only PDFs, we chose a graceful fallback. The parser detects lack of text, logs a clear diagnostic error, and skips the file. This keeps the environment lightweight and pure.
+- **Deterministic Pipeline Execution**: The pipeline guarantees the same input files always produce the identical Canonical Profiles. We achieved this by sorting input paths, implementing stable Union-Find algorithms, and breaking merge ties using stable attributes like `source_name`.
+- **Pure Python Regex Heuristics vs LLMs**: For unstructured resumes, we opted for robust, fine-tuned Regular Expressions over LLM calls to ensure sub-millisecond execution times, 100% determinism, and zero external network dependency.
+
+---
+
+## 🔒 Security & Privacy
+
+TalentFlow handles PII (Personally Identifiable Information) and takes security seriously:
+
+- **Path Traversal Prevention**: Filenames uploaded via the API are strictly sanitized using regex allow-lists before being written to the temporary filesystem.
+- **Byte-Signature Validation**: The system does not trust file extensions (`.pdf`). It verifies the file signature at the API boundary, rejecting spoofed or malicious executables disguised as documents.
+- **Zero-Byte & Billion-Laughs Defenses**: Limits are placed on upload payload sizes, and empty or corrupted files are caught instantly before parsing engines allocate memory.
+- **CORS Protection & DOM Sanitization**: The FastAPI backend is configured with strict CORS rules. The frontend UI uses an `escapeHtml` utility function to mitigate XSS attacks during profile rendering.
+
+---
+
+## 🚀 Features & Capabilities
+
+- **CLI Interface**: A native command line tool (`talentflow`) built with Click for processing directories in CI/CD pipelines.
+- **Dynamic Configuration Policy**: Supply a `config.json` to alter how canonical profiles are emitted (ideal for syncing to downstream ATS systems with differing schemas).
+- **Provenance Tracking**: Every value in the Canonical Profile ships with a `provenance` trace. You always know *which file* provided a data point and *how* it was merged.
+- **Glassmorphic Web Interface**: A sleek, accessible web dashboard featuring drag-and-drop uploads, interactive JSON inspection, ARIA-labels, keyboard navigation, and responsive design.
 
 ---
 
@@ -39,11 +83,10 @@ The pipeline follows a strict multi-stage synchronous architecture to ensure dat
 
 - **Core**: Python 3.11+
 - **Data Validation**: Pydantic v2
-- **API Backend**: FastAPI
-- **Parsing**: `python-dateutil`, `phonenumbers`, `pycountry`, `pymupdf` (PDF), `python-docx` (DOCX)
-- **CLI**: Click
-- **Frontend**: Vanilla JS, CSS Variables, Glassmorphism design (PulseAI inspired)
-- **Testing**: Pytest (100+ tests covering parsers, edge cases, e2e)
+- **API Backend**: FastAPI, Uvicorn
+- **Parsing Engines**: `python-dateutil`, `phonenumbers`, `pycountry`, `pymupdf` (PDF), `python-docx`
+- **Testing Engine**: Pytest, Coverage
+- **Frontend UI**: Vanilla JavaScript, CSS Variables, Semantic HTML5
 
 ---
 
@@ -55,7 +98,7 @@ The pipeline follows a strict multi-stage synchronous architecture to ensure dat
    cd TalentFlow
    ```
 
-2. **Create a virtual environment (optional but recommended)**
+2. **Create a virtual environment**
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -72,49 +115,32 @@ The pipeline follows a strict multi-stage synchronous architecture to ensure dat
 
 ### Command Line Interface (CLI)
 
-You can run the pipeline directly from your terminal using the `talentflow` CLI tool.
-
-**Basic Usage:**
 ```bash
+# Basic Execution
 talentflow -i sample_inputs/ -o sample_outputs/output.json
-```
 
-**With Custom Configuration Policy:**
-```bash
+# Execution with custom JSON projection policy
 talentflow -i sample_inputs/ -o sample_outputs/custom.json -c config.json
 ```
 
-### Web UI
+### Web Application
 
-TalentFlow includes a beautiful, fully responsive Web UI.
-
-1. **Start the API server:**
-   ```bash
-   python -m api.index
-   # Or using uvicorn:
-   # uvicorn api.index:app --reload
-   ```
-2. **Open the App:** Navigate to `http://localhost:8000` in your browser.
-3. **Process Files:** Drag & drop your JSON, CSV, TXT, PDF, or DOCX files to see the pipeline run in real-time.
+Start the FastAPI application backend:
+```bash
+python -m api.index
+```
+Open `http://localhost:8000` in your web browser. 
+Features fully navigable keyboard accessibility, dropzone interaction, and real-time visualization of Canonical Profiles.
 
 ---
 
 ## 🧪 Testing
 
-The repository includes a comprehensive test suite covering unit tests, edge cases, and end-to-end pipeline execution.
+The repository maintains an extensive test suite verifying parsers, normalizers, edge cases, deterministic merging, and e2e integration.
 
 ```bash
-# Run all tests
 pytest tests/ -v
 ```
-
----
-
-## 🔒 Security & Privacy
-
-- **CORS Protection**: The FastAPI backend is configured with strict CORS rules to prevent unauthorized cross-origin requests.
-- **XSS Mitigation**: The Web UI uses proper HTML escaping for all user-supplied data before DOM insertion.
-- **File Validation**: The API validates file extensions and enforces a 10MB file size limit before processing.
 
 ---
 
