@@ -153,3 +153,7 @@ async def process_files(files: list[UploadFile] = File(...)):
         except Exception as e:
             logger.error("Error processing files: %s", e, exc_info=True)
             raise HTTPException(status_code=500, detail="Failed to process files")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("api.index:app", host="0.0.0.0", port=8000, reload=True)

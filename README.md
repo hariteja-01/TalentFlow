@@ -57,13 +57,13 @@ cat sample_outputs/default_output.json
 ### CLI Usage - Custom Configs
 ```bash
 # Minimal profile (name, email, skills only)
-talentflow -i sample_inputs/ -o sample_outputs/minimal_profile.json -c config/minimal_profile.json
+talentflow -i sample_inputs/ -o sample_outputs/minimal_profile.json -c configs/minimal_profile.json
 
 # Recruiter view (optimized for recruiter dashboard)
-talentflow -i sample_inputs/ -o sample_outputs/recruiter_view.json -c config/recruiter_view.json
+talentflow -i sample_inputs/ -o sample_outputs/recruiter_view.json -c configs/recruiter_view.json
 
 # No confidence scores
-talentflow -i sample_inputs/ -o sample_outputs/no_confidence.json -c config/no_confidence.json
+talentflow -i sample_inputs/ -o sample_outputs/no_confidence.json -c configs/no_confidence.json
 ```
 
 ### Web UI
