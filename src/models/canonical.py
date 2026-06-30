@@ -68,8 +68,9 @@ class Provenance(BaseModel):
 class CanonicalProfile(BaseModel):
     """The final, merged, normalized candidate profile.
 
-    This is the pipeline's output. Every field follows a fixed format.
-    Unknown values are None, never invented.
+    This serves as the primary data structure output by the pipeline.
+    Every field adheres to a fixed format to ensure predictability.
+    Values that cannot be determined remain None; data is never hallucinated.
     """
 
     candidate_id: str
