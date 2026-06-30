@@ -37,5 +37,5 @@ coverage.xml
 .pytest_cache/
 .mypy_cache/
 
-# Private study guide — NOT for submission
+# Private environment configurations
 private-study-guide/
