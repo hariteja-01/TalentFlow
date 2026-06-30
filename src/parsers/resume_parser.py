@@ -119,7 +119,7 @@ def _is_date_range(text: str) -> bool:
 
 
 class ResumeParser(BaseParser):
-    """Extracts candidate data from plain-text resumes using regex heuristics."""
+    """Extract candidate information from PDF and DOCX resume files using pattern matching."""
 
     @property
     def source_type(self) -> str:
