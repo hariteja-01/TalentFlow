@@ -59,7 +59,7 @@ def run_pipeline(
     input_paths: list[Path],
     config: OutputConfig | None = None,
 ) -> PipelineResult:
-    """Run the full transformation pipeline.
+    """Process all input files and generate unified candidate profiles.
 
     Args:
         input_paths: Paths to source files or directories.
