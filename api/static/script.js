@@ -456,4 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fileInput) {
         fileInput.value = '';
     }
+    
+    if (configSelect) {
+        configSelect.addEventListener('change', () => {
+            if (selectedFiles.length > 0) {
+                processFiles();
+            }
+        });
+    }
 });
