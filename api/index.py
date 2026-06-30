@@ -3,13 +3,13 @@ from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import json
-import tempfile
 import os
 import re
+import sys
+import tempfile
 from pathlib import Path
 
 # Add src to python path for Vercel imports if necessary
-import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from src.pipeline.orchestrator import run_pipeline
