@@ -80,10 +80,11 @@ def run_pipeline(
 
     # --- Stage 2: Extract ---
     logger.info("=== Stage 2: Extraction ===")
-    records = extract_records(files)
+    records, ext_warnings = extract_records(files)
+    all_warnings.extend(ext_warnings)
     if not records:
         logger.warning("No records extracted from any source")
-        return PipelineResult(profiles=[], warnings=["No records extracted"])
+        return PipelineResult(profiles=[], warnings=all_warnings)
 
     # --- Stage 3: Normalize ---
     logger.info("=== Stage 3: Normalization ===")

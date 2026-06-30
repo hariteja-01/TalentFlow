@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 import json
 import tempfile
 import os
+import re
 from pathlib import Path
 
 # Add src to python path for Vercel imports if necessary
@@ -90,6 +91,28 @@ def get_sample(file_path: str):
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_EXTENSIONS = {".json", ".csv", ".txt", ".pdf", ".docx"}
 
+def secure_filename(filename: str) -> str:
+    if not filename:
+        return "unnamed_file"
+    filename = os.path.basename(filename)
+    filename = re.sub(r'[^a-zA-Z0-9_.-]', '_', filename)
+    return filename
+
+def validate_file_content(content: bytes, ext: str) -> bool:
+    if len(content) == 0:
+        return False
+    if ext == ".pdf":
+        return content.startswith(b"%PDF")
+    if ext == ".docx":
+        return content.startswith(b"PK\x03\x04")
+    if ext in {".json", ".csv", ".txt"}:
+        try:
+            content[:1024].decode('utf-8')
+            return True
+        except UnicodeDecodeError:
+            return False
+    return False
+
 @app.post("/api/process")
 async def process_files(files: list[UploadFile] = File(...)):
     if not files:
@@ -104,10 +127,16 @@ async def process_files(files: list[UploadFile] = File(...)):
                 raise HTTPException(status_code=400, detail=f"Unsupported file extension: {ext}")
 
             content = await file.read()
+            if len(content) == 0:
+                raise HTTPException(status_code=400, detail=f"File {file.filename} is empty")
             if len(content) > MAX_FILE_SIZE:
                 raise HTTPException(status_code=413, detail=f"File {file.filename} exceeds maximum size of 10MB")
                 
-            file_path = tmp_path / file.filename
+            if not validate_file_content(content, ext):
+                raise HTTPException(status_code=400, detail=f"File content does not match extension or is corrupted: {file.filename}")
+                
+            safe_filename = secure_filename(file.filename)
+            file_path = tmp_path / safe_filename
             with open(file_path, "wb") as f:
                 f.write(content)
         

@@ -134,12 +134,14 @@ class ResumeParser(BaseParser):
                     text = file_path.read_text(encoding="latin-1")
                     logger.warning("Used latin-1 fallback for %s", file_path)
         except Exception as e:
-            logger.error("Failed to read %s: %s", file_path, e)
-            return []
+            if "encrypted" in str(e).lower() or "password" in str(e).lower():
+                raise ValueError(f"Encrypted PDF not supported: {file_path.name}")
+            raise ValueError(f"Failed to read {file_path.name}: {e}")
 
         if not text.strip():
-            logger.warning("Empty resume file: %s", file_path)
-            return []
+            if ext == ".pdf":
+                raise ValueError(f"Image-only PDF detected (no machine-readable text found): {file_path.name}")
+            raise ValueError(f"Empty document: {file_path.name}")
 
         record = self._extract_from_text(text, file_path)
         logger.info("Parsed resume from %s", file_path.name)

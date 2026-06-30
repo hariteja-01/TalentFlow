@@ -77,16 +77,11 @@ class CsvParser(BaseParser):
             try:
                 text = file_path.read_text(encoding="latin-1")
                 logger.warning("Used latin-1 fallback encoding for %s", file_path)
-            except OSError as e:
-                logger.error("Failed to read %s: %s", file_path, e)
-                return []
         except OSError as e:
-            logger.error("Failed to read %s: %s", file_path, e)
-            return []
+            raise ValueError(f"Failed to read {file_path.name}: {e}")
 
         if not text.strip():
-            logger.warning("Empty CSV file: %s", file_path)
-            return []
+            raise ValueError(f"Empty CSV file: {file_path.name}")
 
         try:
             reader = csv.DictReader(StringIO(text))
@@ -94,8 +89,7 @@ class CsvParser(BaseParser):
                 logger.warning("No headers found in CSV: %s", file_path)
                 return []
         except csv.Error as e:
-            logger.error("CSV parsing error in %s: %s", file_path, e)
-            return []
+            raise ValueError(f"CSV parsing error in {file_path.name}: {e}")
 
         # Map actual column names to our canonical field names
         column_map = self._build_column_map(reader.fieldnames)

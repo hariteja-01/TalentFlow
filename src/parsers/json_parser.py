@@ -30,18 +30,15 @@ class JsonParser(BaseParser):
         try:
             text = file_path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as e:
-            logger.error("Failed to read %s: %s", file_path, e)
-            return []
+            raise ValueError(f"Failed to read {file_path.name}: {e}")
 
         if not text.strip():
-            logger.warning("Empty JSON file: %s", file_path)
-            return []
+            raise ValueError(f"Empty JSON file: {file_path.name}")
 
         try:
             data = json.loads(text)
         except json.JSONDecodeError as e:
-            logger.error("Invalid JSON in %s: %s", file_path, e)
-            return []
+            raise ValueError(f"Invalid JSON in {file_path.name}: {e}")
 
         # Normalize to list of candidate dicts
         if isinstance(data, dict):
@@ -53,8 +50,7 @@ class JsonParser(BaseParser):
         elif isinstance(data, list):
             candidates = data
         else:
-            logger.error("Unexpected JSON structure in %s", file_path)
-            return []
+            raise ValueError(f"Unexpected JSON structure in {file_path.name}")
 
         records = []
         for i, candidate in enumerate(candidates):

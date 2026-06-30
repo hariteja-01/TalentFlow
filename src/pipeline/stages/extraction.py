@@ -27,17 +27,18 @@ _PARSERS: dict[str, BaseParser] = {
 
 def extract_records(
     files: list[tuple[Path, str]],
-) -> list[IntermediateRecord]:
+) -> tuple[list[IntermediateRecord], list[str]]:
     """Parse all source files into IntermediateRecords.
 
     Args:
         files: List of (file_path, source_type) from the ingestion stage.
 
     Returns:
-        Flat list of all extracted IntermediateRecords.
-        Failed files are skipped (logged), never crash the pipeline.
+        Tuple of (records, warnings).
+        Failed files are skipped, never crash the pipeline, but produce a warning.
     """
     all_records: list[IntermediateRecord] = []
+    warnings: list[str] = []
 
     for file_path, source_type in files:
         parser = _PARSERS.get(source_type)
@@ -51,11 +52,16 @@ def extract_records(
             logger.debug(
                 "Extracted %d records from %s (%s)", len(records), file_path.name, source_type
             )
+        except ValueError as e:
+            msg = f"Failed to parse {file_path.name}: {e}"
+            logger.error(msg)
+            warnings.append(msg)
+            continue
         except Exception as e:
-            # Safety net — parsers should handle their own errors,
-            # but we never let one bad file crash the whole pipeline
-            logger.error("Unexpected error parsing %s: %s", file_path, e)
+            msg = f"Unexpected error parsing {file_path.name}: {e}"
+            logger.error(msg)
+            warnings.append(msg)
             continue
 
     logger.info("Extracted %d total records from %d files", len(all_records), len(files))
-    return all_records
+    return all_records, warnings
