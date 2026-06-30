@@ -5,10 +5,6 @@
   <img src="https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?logo=fastapi" alt="FastAPI">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License MIT">
   <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Passing">
-  
-  <p align="center">
-    <h3>🌐 <a href="https://talent-flow-gules.vercel.app/">Live Demo</a> | 🎥 <a href="#">Demo Video</a> | 📂 <a href="https://github.com/hariteja-01/TalentFlow">GitHub Repository</a></h3>
-  </p>
 </div>
 
 ## 🎥 Demo Video
@@ -17,13 +13,57 @@
 
 *A 2-minute walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
 
----
+## 🔗 Quick Links
+- 🌐 [Live Demo](https://talent-flow-gules.vercel.app/)
+- 📂 [GitHub Repository](https://github.com/hariteja-01/TalentFlow)
+- 📄 [Stage 1 Design Document (PDF)](docs/HariTeja_patnalahariteja_Eightfold.pdf)
 
-TalentFlow is a robust, production-grade data pipeline designed to ingest, normalize, and merge candidate data from highly heterogeneous sources (ATS JSON payloads, HRIS CSV exports, GitHub API, and unstructured Resumes) into a single, unified Canonical Profile.
+## 🏗 System Architecture & End-to-End Pipeline Flow
 
-Built to satisfy the Eightfold Candidate Profile Transformer problem statement, TalentFlow emphasizes deterministic merging, robust error boundaries, strict validation, and a beautiful, accessible web interface.
+TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceability, testability, and guarantees that errors in one document never poison the pipeline.
 
----
+```mermaid
+graph TD
+    %% Define Styles
+    classDef external fill:#f3f4f6,stroke:#d1d5db,stroke-width:1px,color:#374151
+    classDef stage fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95,font-weight:bold
+    classDef output fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46
+    
+    A1[JSON ATS]:::external
+    A2[CSV HRIS]:::external
+    A3[Resumes PDF/TXT/DOCX]:::external
+    
+    B(1. Ingestion Stage<br>File discovery & mime validation):::stage
+    C(2. Extraction Stage<br>Regex heuristics & routing):::stage
+    D(3. Normalization Stage<br>E.164, Date standardizing, Aliases):::stage
+    E(4. Merging Stage<br>Union-Find identity resolution):::stage
+    F(5. Confidence Stage<br>Scoring completeness):::stage
+    G(6. Projection Stage<br>Applying configs/policies):::stage
+    
+    H[Canonical Profile JSON]:::output
+    
+    A1 & A2 & A3 --> B
+    B --> C
+    C -- IntermediateRecords --> D
+    D -- NormalizedRecords --> E
+    E -- CanonicalProfiles --> F
+    F --> G
+    G --> H
+```
+
+## ✨ Key Features
+
+- **Multi-Source Ingestion**: Unifies ATS JSON, HRIS CSVs, PDF/DOCX Resumes, and GitHub API data.
+- **Identity Resolution**: Resolves candidate duplicates deterministically using Union-Find via exact email matching.
+- **Dynamic Projection Layer**: Supports reshaping output fields and omitting missing data via custom JSON configurations.
+- **Robust Error Handling**: Never crashes on malformed files, gracefully skips and warns.
+- **Beautiful Web Interface**: Modern, responsive interface to easily visualize transformed data.
+
+## 📸 Screenshots
+
+| Landing & Upload | Unified Profile Results |
+|:---:|:---:|
+| ![Landing Page](docs/images/landing.png) | ![Results Page](docs/images/results.png) |
 
 ## 🚀 Quick Start
 
@@ -78,14 +118,9 @@ python -m api.index
 # View unified canonical profiles
 ```
 
----
+## 💡 Project Motivation
 
-## 📄 Documentation
-
-- **[Stage 1 Design Document](docs/HariTeja_patnalahariteja_Eightfold.md)** - Technical design covering pipeline architecture, merge policy, confidence scoring, and edge cases.
-- **[Architecture Diagrams](docs/images/)** - Visual pipeline flow and system architecture.
-
----
+TalentFlow was built to satisfy the Eightfold Candidate Profile Transformer problem statement, emphasizing deterministic merging, robust error boundaries, strict validation, and a beautiful, accessible web interface.
 
 ## 🛡️ Edge Cases Handled
 
@@ -104,7 +139,18 @@ This system gracefully handles numerous edge cases per the "robust" requirement:
 
 **Philosophy**: "Wrong-but-confident is worse than honestly-empty" - we return null rather than guess.
 
----
+## 🛠 Tech Stack
+
+- **Backend / Pipeline**: Python 3.11+, Pydantic (data models), PyMuPDF (PDF extraction), python-docx (DOCX extraction), phonenumbers (normalization).
+- **Web Interface**: FastAPI, Uvicorn, Vanilla JS, HTML/CSS.
+- **Testing**: Pytest, Pytest-Cov.
+
+## 🧪 Testing
+
+Run the test suite using pytest:
+```bash
+pytest tests/ -v --cov=src
+```
 
 ## 📋 Assumptions
 
@@ -115,8 +161,6 @@ This system gracefully handles numerous edge cases per the "robust" requirement:
 5. **E.164 Phone Format**: Uses `phonenumbers` library; defaults to `None` region if country code missing.
 6. **Deterministic Processing**: Files processed in sorted order to ensure same inputs → same outputs.
 7. **Conservative Extraction**: When document structure unclear, return empty/null rather than guess.
-
----
 
 ## ⚠️ Deliberately Descoped
 
@@ -131,42 +175,10 @@ Under time constraints, the following were intentionally left out:
 7. **Advanced Resume Formats**: Handles standard resume layouts; complex multi-column or table-heavy resumes may extract incorrectly.
 8. **Internationalization**: Phone normalization assumes common formats; exotic international formats may fail.
 
----
+## 📄 Documentation
 
-## 🏗 System Architecture
-
-TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceability, testability, and guarantees that errors in one document never poison the pipeline.
-
-```mermaid
-graph TD
-    %% Define Styles
-    classDef external fill:#f3f4f6,stroke:#d1d5db,stroke-width:1px,color:#374151
-    classDef stage fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95,font-weight:bold
-    classDef output fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46
-    
-    A1[JSON ATS]:::external
-    A2[CSV HRIS]:::external
-    A3[Resumes PDF/TXT/DOCX]:::external
-    
-    B(1. Ingestion Stage<br>File discovery & mime validation):::stage
-    C(2. Extraction Stage<br>Regex heuristics & routing):::stage
-    D(3. Normalization Stage<br>E.164, Date standardizing, Aliases):::stage
-    E(4. Merging Stage<br>Union-Find identity resolution):::stage
-    F(5. Confidence Stage<br>Scoring completeness):::stage
-    G(6. Projection Stage<br>Applying configs/policies):::stage
-    
-    H[Canonical Profile JSON]:::output
-    
-    A1 & A2 & A3 --> B
-    B --> C
-    C -- IntermediateRecords --> D
-    D -- NormalizedRecords --> E
-    E -- CanonicalProfiles --> F
-    F --> G
-    G --> H
-```
-
----
+- **[Stage 1 Design Document (PDF)](docs/HariTeja_patnalahariteja_Eightfold.pdf)** - Technical design covering pipeline architecture, merge policy, confidence scoring, and edge cases.
+- **[Architecture Diagrams](docs/images/)** - Visual pipeline flow and system architecture.
 
 ## 🔒 Security Considerations
 
@@ -176,7 +188,31 @@ TalentFlow handles PII (Personally Identifiable Information) and takes security 
 - **Zero-Byte & Billion-Laughs Defenses**: Limits are placed on upload payload sizes, and empty or corrupted files are caught instantly before parsing engines allocate memory.
 - **CORS Protection & DOM Sanitization**: The FastAPI backend is configured with strict CORS rules. The frontend UI uses an `escapeHtml` utility function to mitigate XSS attacks during profile rendering.
 
----
+## 📁 Folder Structure
+
+```
+TalentFlow/
+├── api/                  # FastAPI backend server
+├── configs/              # Output projection configurations
+├── docs/                 # Documentation and architecture assets
+├── sample_inputs/        # Sample HRIS, ATS, and resume data
+├── sample_outputs/       # Generated canonical profiles
+├── src/                  # Core pipeline source code
+│   ├── models/           # Pydantic schemas (canonical, intermediate)
+│   ├── normalizers/      # Phone, date, location standardization
+│   ├── parsers/          # Extraction engines (PDF, CSV, JSON)
+│   ├── pipeline/         # Orchestrator and transformation stages
+│   └── utils/            # Logging and shared helpers
+└── tests/                # Pytest test suite
+```
+
+## 🔮 Future Improvements
+
+1. **LLM Integration**: Replace regex extractors with structured LLM parsing for resumes with non-standard layouts.
+2. **Database Backend**: Introduce SQLAlchemy for persisting profiles in PostgreSQL.
+3. **ElasticSearch Integration**: Build a fuzzy-search layer on top of unified profiles.
+4. **WebSocket Progress Updates**: Provide real-time UI feedback for bulk file uploads.
+5. **Async Processing**: Use Celery/Redis for background processing of large batches.
 
 ## 📜 License
 
