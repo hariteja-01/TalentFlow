@@ -33,12 +33,17 @@ def detect_source_type(file_path: Path) -> str | None:
 
     # Special handling for text files: might be a resume or github urls
     if source_type == "resume" and ext == ".txt":
-        try:
-            content = file_path.read_text(encoding="utf-8").lower()
-            if "github.com/" in content:
-                source_type = "github"
-        except Exception:
-            pass  # Fall back to resume if unreadable
+        if file_path.name.startswith("github_"):
+            source_type = "github"
+        else:
+            try:
+                content = file_path.read_text(encoding="utf-8").strip()
+                import re
+                # Check if it looks like a list of github URLs
+                if content and all("github.com/" in line.lower() for line in content.splitlines() if line.strip()):
+                    source_type = "github"
+            except Exception:
+                pass  # Fall back to resume if unreadable
 
     if source_type is None:
         logger.warning("Unsupported file extension '%s' for %s", ext, file_path)

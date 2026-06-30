@@ -29,7 +29,13 @@ class GithubParser(BaseParser):
         except (OSError, UnicodeDecodeError) as e:
             raise ValueError(f"Failed to read {file_path.name}: {e}")
 
-        urls = [line.strip() for line in content.splitlines() if "github.com/" in line.lower()]
+        import re
+        github_url_re = re.compile(r'https?://(?:www\.)?github\.com/[a-zA-Z0-9_-]+')
+        
+        urls = []
+        for line in content.splitlines():
+            matches = github_url_re.findall(line)
+            urls.extend(matches)
         
         if not urls:
             raise ValueError(f"No GitHub URLs found in {file_path.name}")
@@ -52,6 +58,8 @@ class GithubParser(BaseParser):
 
     def _extract_username(self, url: str) -> str | None:
         """Extract the username from a github.com URL."""
+        if not url.startswith("http"):
+            url = "https://" + url
         try:
             parsed = urlparse(url)
             path = parsed.path.strip("/")
@@ -71,8 +79,8 @@ class GithubParser(BaseParser):
             with urllib.request.urlopen(req, timeout=5) as response:
                 data = json.loads(response.read().decode())
 
-            # Attempt to fetch top languages as skills
-            skills = self._fetch_languages(username, headers)
+            # Attempt to fetch top languages and topics as skills
+            skills = self._fetch_skills(username, headers)
 
             # Parse location
             location = None
@@ -113,6 +121,19 @@ class GithubParser(BaseParser):
                 portfolio=data.get("blog") if data.get("blog") else None,
                 other=[],
             )
+            
+            # Parse account age as years_experience
+            years_experience = None
+            created_at = data.get("created_at")
+            if created_at:
+                try:
+                    import datetime
+                    # Extract year
+                    created_year = int(created_at[:4])
+                    current_year = datetime.datetime.now().year
+                    years_experience = max(0.0, float(current_year - created_year))
+                except Exception:
+                    pass
 
             return IntermediateRecord(
                 source_name=source_name,
@@ -124,7 +145,7 @@ class GithubParser(BaseParser):
                 location=location,
                 links=links,
                 headline=data.get("bio"),
-                years_experience=None,
+                years_experience=years_experience,
                 skills=skills,
                 experience=[],
                 education=[],
@@ -178,19 +199,33 @@ class GithubParser(BaseParser):
                 logger.debug("Error fetching README for %s: %s", username, e)
         return None
 
-    def _fetch_languages(self, username: str, headers: dict) -> list[str]:
-        """Fetch a user's repositories and extract their languages to use as skills."""
-        api_url = f"https://api.github.com/users/{username}/repos?sort=updated&per_page=10"
+    def _fetch_skills(self, username: str, headers: dict) -> list[str]:
+        """Fetch a user's repositories and extract their languages and topics to use as skills."""
+        api_url = f"https://api.github.com/users/{username}/repos?sort=pushed&per_page=15"
         try:
             req = urllib.request.Request(api_url, headers=headers)
             with urllib.request.urlopen(req, timeout=5) as response:
                 repos = json.loads(response.read().decode())
                 
-            languages = set()
+            skills = set()
             for repo in repos:
+                # Add Primary Language
                 if repo.get("language"):
-                    languages.add(repo["language"])
-            return list(languages)
+                    skills.add(repo["language"])
+                
+                # Add Repository Topics
+                topics = repo.get("topics") or []
+                for topic in topics:
+                    skills.add(topic)
+                    
+                # Search Description for common skills
+                description = (repo.get("description") or "").lower()
+                common_skills = ["react", "node", "django", "flask", "kubernetes", "docker", "aws", "gcp", "azure", "tensorflow", "pytorch"]
+                for cs in common_skills:
+                    if cs in description:
+                        skills.add(cs)
+                        
+            return list(skills)
         except Exception as e:
-            logger.debug("Could not fetch languages for %s: %s", username, e)
+            logger.debug("Could not fetch repo skills for %s: %s", username, e)
             return []

@@ -7,6 +7,7 @@ import pytest
 from src.parsers.json_parser import JsonParser
 from src.parsers.csv_parser import CsvParser
 from src.parsers.resume_parser import ResumeParser
+from src.parsers.github_parser import GithubParser
 
 
 class TestJsonParser:
@@ -131,3 +132,23 @@ class TestResumeParser:
 
     def test_source_type(self):
         assert ResumeParser().source_type == "resume"
+
+
+class TestGithubParser:
+    """Tests for the GitHub profile parser."""
+
+    def test_extract_username(self):
+        parser = GithubParser()
+        assert parser._extract_username("https://github.com/octocat") == "octocat"
+        assert parser._extract_username("https://www.github.com/torvalds/") == "torvalds"
+        assert parser._extract_username("github.com/hariteja-01") == "hariteja-01"
+
+    def test_parse_empty_file(self, tmp_path):
+        f = tmp_path / "github_urls.txt"
+        f.write_text("just some text\nno valid urls here")
+        parser = GithubParser()
+        with pytest.raises(ValueError, match="No GitHub URLs found"):
+            parser.parse(f)
+
+    def test_source_type(self):
+        assert GithubParser().source_type == "github"

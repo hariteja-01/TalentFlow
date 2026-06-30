@@ -52,56 +52,55 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
     Uses Union-Find logic: if record A and B share an email,
     they're the same person. Transitively merged.
     """
-    # Map each email to a canonical group key
-    email_to_group: dict[str, str] = {}
-    # Map each group key to its records
-    groups: dict[str, list[IntermediateRecord]] = defaultdict(list)
-    # Track name-based groups as fallback
-    name_to_group: dict[str, str] = {}
-    # Track URL-based groups as fallback
-    github_to_group: dict[str, str] = {}
+    # Build a graph of records
+    # Nodes are indices of records, edges are overlaps in identity
+    parent = {i: i for i in range(len(records))}
 
-    for record in records:
-        # Try to find an existing group via email overlap
-        matching_group = None
+    def find(i):
+        if parent[i] == i:
+            return i
+        parent[i] = find(parent[i])
+        return parent[i]
+
+    def union(i, j):
+        root_i = find(i)
+        root_j = find(j)
+        if root_i != root_j:
+            parent[root_i] = root_j
+
+    email_to_index: dict[str, int] = {}
+    name_to_index: dict[str, int] = {}
+    github_to_index: dict[str, int] = {}
+
+    for i, record in enumerate(records):
+        # Check emails
         for email in record.emails:
             email_lower = email.lower()
-            if email_lower in email_to_group:
-                matching_group = email_to_group[email_lower]
-                break
+            if email_lower in email_to_index:
+                union(i, email_to_index[email_lower])
+            email_to_index[email_lower] = i
 
-        # Fallback 1: try exact name match
-        if matching_group is None and record.full_name:
-            name_key = record.full_name.strip().lower()
-            if name_key in name_to_group:
-                matching_group = name_to_group[name_key]
-
-        # Fallback 2: try URL overlap (GitHub)
-        if matching_group is None and record.links:
-            if record.links.github:
-                gh_lower = record.links.github.strip().lower().rstrip('/')
-                if gh_lower in github_to_group:
-                    matching_group = github_to_group[gh_lower]
-
-        # Create new group if no match found
-        if matching_group is None:
-            matching_group = _generate_group_key(record)
-
-        # Register all emails to this group
-        for email in record.emails:
-            email_to_group[email.lower()] = matching_group
-
-        # Register name to this group
+        # Check name fallback
         if record.full_name:
-            name_to_group[record.full_name.strip().lower()] = matching_group
+            name_key = record.full_name.strip().lower()
+            if name_key in name_to_index:
+                union(i, name_to_index[name_key])
+            name_to_index[name_key] = i
 
-        # Register URLs to this group
-        if record.links:
-            if record.links.github:
-                gh_lower = record.links.github.strip().lower().rstrip('/')
-                github_to_group[gh_lower] = matching_group
+        # Check GitHub fallback
+        if record.links and record.links.github:
+            gh_lower = record.links.github.strip().lower().rstrip('/')
+            if gh_lower in github_to_index:
+                union(i, github_to_index[gh_lower])
+            github_to_index[gh_lower] = i
 
-        groups[matching_group].append(record)
+    groups: dict[str, list[IntermediateRecord]] = defaultdict(list)
+    for i, record in enumerate(records):
+        root = find(i)
+        # Use the first record in the component to generate a stable key
+        root_record = records[root]
+        group_key = _generate_group_key(root_record)
+        groups[group_key].append(record)
 
     return dict(groups)
 

@@ -135,7 +135,8 @@ async def process_files(files: list[UploadFile] = File(...)):
             if not validate_file_content(content, ext):
                 raise HTTPException(status_code=400, detail=f"File content does not match extension or is corrupted: {file.filename}")
                 
-            safe_filename = secure_filename(file.filename)
+            import uuid
+            safe_filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
             file_path = tmp_path / safe_filename
             with open(file_path, "wb") as f:
                 f.write(content)
