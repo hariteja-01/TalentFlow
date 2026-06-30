@@ -757,15 +757,11 @@
     "overall_confidence": 0.54
   },
   {
-    "candidate_id": "3c0439097761",
-    "full_name": "Linus Torvalds",
+    "candidate_id": "6d017ac29ee0",
+    "full_name": "Torvalds",
     "emails": [],
     "phones": [],
-    "location": {
-      "city": "Portland",
-      "region": "Oregon",
-      "country": null
-    },
+    "location": null,
     "links": {
       "linkedin": null,
       "github": "https://github.com/torvalds",
@@ -773,30 +769,8 @@
       "other": []
     },
     "headline": null,
-    "years_experience": 15.0,
-    "skills": [
-      {
-        "name": "C",
-        "confidence": 0.65,
-        "sources": [
-          "github_profiles.txt"
-        ]
-      },
-      {
-        "name": "C++",
-        "confidence": 0.65,
-        "sources": [
-          "github_profiles.txt"
-        ]
-      },
-      {
-        "name": "OpenSCAD",
-        "confidence": 0.65,
-        "sources": [
-          "github_profiles.txt"
-        ]
-      }
-    ],
+    "years_experience": null,
+    "skills": [],
     "experience": [],
     "education": [],
     "provenance": [
@@ -806,69 +780,28 @@
         "method": "merged-highest-weight"
       },
       {
-        "field": "years_experience",
-        "source": "github_profiles.txt",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "location",
-        "source": "github_profiles.txt",
-        "method": "merged-highest-weight"
-      },
-      {
         "field": "links.github",
         "source": "github_profiles.txt",
         "method": "merged-first-found"
-      },
-      {
-        "field": "skills",
-        "source": "multiple",
-        "method": "merged-union-dedup"
       }
     ],
-    "overall_confidence": 0.29
+    "overall_confidence": 0.12
   },
   {
-    "candidate_id": "4e69048aaa4e",
-    "full_name": "The Octocat",
+    "candidate_id": "a6658157f0df",
+    "full_name": "Octocat",
     "emails": [],
     "phones": [],
-    "location": {
-      "city": "San Francisco",
-      "region": null,
-      "country": null
-    },
+    "location": null,
     "links": {
       "linkedin": null,
       "github": "https://github.com/octocat",
-      "portfolio": "https://github.blog",
+      "portfolio": null,
       "other": []
     },
     "headline": null,
-    "years_experience": 15.0,
-    "skills": [
-      {
-        "name": "CSS",
-        "confidence": 0.65,
-        "sources": [
-          "github_profiles.txt"
-        ]
-      },
-      {
-        "name": "Ruby",
-        "confidence": 0.65,
-        "sources": [
-          "github_profiles.txt"
-        ]
-      },
-      {
-        "name": "HTML",
-        "confidence": 0.65,
-        "sources": [
-          "github_profiles.txt"
-        ]
-      }
-    ],
+    "years_experience": null,
+    "skills": [],
     "experience": [],
     "education": [],
     "provenance": [
@@ -878,32 +811,11 @@
         "method": "merged-highest-weight"
       },
       {
-        "field": "years_experience",
-        "source": "github_profiles.txt",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "location",
-        "source": "github_profiles.txt",
-        "method": "merged-highest-weight"
-      },
-      {
         "field": "links.github",
         "source": "github_profiles.txt",
         "method": "merged-first-found"
-      },
-      {
-        "field": "links.portfolio",
-        "source": "github_profiles.txt",
-        "method": "merged-first-found"
-      },
-      {
-        "field": "skills",
-        "source": "multiple",
-        "method": "merged-union-dedup"
       }
     ],
-    "overall_confidence": 0.302
+    "overall_confidence": 0.12
   }
-] 
- 
+]
