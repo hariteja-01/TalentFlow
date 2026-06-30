@@ -100,7 +100,7 @@ async function loadSampleFile() {
     const filepath = sampleSelect.value;
     if (!filepath) return;
     
-    if (resultsContainer.style.display === 'block' || resultsContainer.style.display === '') {
+    if (resultsContainer.style.display !== 'none' && resultsContainer.style.display !== '') {
         resetPipeline();
     }
     
