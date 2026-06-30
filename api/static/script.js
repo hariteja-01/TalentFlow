@@ -139,7 +139,6 @@ async function loadSampleFile() {
         const file = new File([blob], filename, { type: blob.type || 'text/plain' });
         
         handleFiles([file]);
-        processFiles();
     } catch (err) {
         alert("Error loading sample: " + err.message);
     }
