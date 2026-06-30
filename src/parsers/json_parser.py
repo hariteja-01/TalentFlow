@@ -58,8 +58,13 @@ class JsonParser(BaseParser):
                 logger.warning("Skipping non-dict entry at index %d in %s", i, file_path)
                 continue
             record = self._extract_record(candidate, file_path)
-            if record:
+            if record and record.has_candidate_data():
                 records.append(record)
+            elif record:
+                logger.warning("Skipping JSON entry at index %d in %s: no recognizable candidate data", i, file_path)
+
+        if not records:
+            raise ValueError(f"File does not contain valid candidate data: {file_path.name}")
 
         logger.info("Parsed %d records from %s", len(records), file_path.name)
         return records

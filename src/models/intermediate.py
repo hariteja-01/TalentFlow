@@ -35,3 +35,20 @@ class IntermediateRecord(BaseModel):
     skills: list[str] = Field(default_factory=list)  # raw names, not canonical
     experience: list[Experience] = Field(default_factory=list)
     education: list[Education] = Field(default_factory=list)
+
+    def has_candidate_data(self) -> bool:
+        """Check if this record contains meaningful candidate data.
+        
+        Used to validate that parsed files are actually candidate profiles,
+        not random JSON/CSV configurations.
+        """
+        return bool(
+            self.full_name or
+            self.emails or
+            self.phones or
+            self.links or
+            self.skills or
+            self.experience or
+            self.education or
+            self.headline
+        )

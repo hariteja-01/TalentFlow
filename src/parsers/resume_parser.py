@@ -140,6 +140,10 @@ class ResumeParser(BaseParser):
             raise ValueError(f"Empty document: {file_path.name}")
 
         record = self._extract_from_text(text, file_path)
+        
+        if not record.has_candidate_data():
+            raise ValueError(f"File does not contain valid candidate data: {file_path.name}")
+            
         logger.info("Parsed resume from %s", file_path.name)
         return [record]
 

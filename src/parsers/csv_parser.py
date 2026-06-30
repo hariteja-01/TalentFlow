@@ -98,8 +98,13 @@ class CsvParser(BaseParser):
         records = []
         for row_num, row in enumerate(reader, start=2):  # Row 1 is header
             record = self._extract_record(row, column_map, file_path, row_num)
-            if record:
+            if record and record.has_candidate_data():
                 records.append(record)
+            elif record:
+                logger.warning("Skipping CSV row %d in %s: no recognizable candidate data", row_num, file_path)
+
+        if not records:
+            raise ValueError(f"File does not contain valid candidate data: {file_path.name}")
 
         logger.info("Parsed %d records from %s", len(records), file_path.name)
         return records

@@ -43,6 +43,13 @@ class TestJsonParser:
         with pytest.raises(ValueError):
             parser.parse(Path("/does/not/exist.json"))
 
+    def test_parse_unrelated_json(self, tmp_path):
+        f = tmp_path / "config.json"
+        f.write_text('{"db_host": "localhost", "port": 5432}')
+        parser = JsonParser()
+        with pytest.raises(ValueError, match="valid candidate data"):
+            parser.parse(f)
+
     def test_source_type(self):
         assert JsonParser().source_type == "json"
 
@@ -72,9 +79,8 @@ class TestCsvParser:
 
     def test_parse_garbage_csv(self, garbage_csv):
         parser = CsvParser()
-        records = parser.parse(garbage_csv)
-        # Should not crash, may return empty records
-        assert isinstance(records, list)
+        with pytest.raises(ValueError, match="valid candidate data"):
+            parser.parse(garbage_csv)
 
     def test_source_type(self):
         assert CsvParser().source_type == "csv"
