@@ -99,6 +99,45 @@ def test_json_parser_deep_nesting(tmp_path: Path):
     assert not records[1].emails
 
 
+@patch("urllib.request.urlopen")
+def test_github_readme_scraping(mock_urlopen, tmp_path):
+    """Test that GitHub parser scrapes README for contact info."""
+    from src.parsers.github_parser import GithubParser
+    
+    # Mock the API profile response
+    mock_api_response = MagicMock()
+    mock_api_response.read.return_value = json.dumps({
+        "login": "testuser",
+        "name": "Test User",
+        "bio": "Developer"
+    }).encode('utf-8')
+    
+    # Mock the language API response
+    mock_lang_response = MagicMock()
+    mock_lang_response.read.return_value = json.dumps([]).encode('utf-8')
+    
+    # Mock the README response
+    mock_readme_response = MagicMock()
+    mock_readme_response.read.return_value = b"Contact me at testuser123@example.com or +1-415-555-1234."
+    
+    # Setup mock to return these in order
+    mock_urlopen.side_effect = [mock_api_response, mock_lang_response, mock_readme_response]
+    
+    f = tmp_path / "urls.txt"
+    f.write_text("https://github.com/testuser")
+    
+    parser = GithubParser()
+    records = parser.parse(f)
+    
+    assert len(records) == 1
+    record = records[0]
+    
+    # The email and phone should be successfully scraped from the README
+    assert "testuser123@example.com" in record.emails
+    assert len(record.phones) == 1
+    assert "415" in record.phones[0]
+
+
 def test_github_parser_rate_limit_fallback(tmp_path: Path):
     """Test Github parser returns partial record instead of throwing when API fails."""
     # We test a known non-existent username that will return 404

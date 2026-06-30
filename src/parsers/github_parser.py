@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from src.models.canonical import Links, Location
 from src.models.intermediate import IntermediateRecord
 from src.parsers.base import BaseParser
+from src.parsers.resume_parser import _EMAIL_RE, _PHONE_RE
 from src.utils.constants import SOURCE_WEIGHTS
 from src.utils.logger import get_logger
 
@@ -90,10 +91,26 @@ class GithubParser(BaseParser):
             if data.get("email"):
                 emails.append(data["email"])
 
+            phones = []
+            
+            # Scrape README.md for contact info
+            readme_text = self._fetch_readme(username, headers)
+            if readme_text:
+                found_emails = _EMAIL_RE.findall(readme_text)
+                for em in found_emails:
+                    if em not in emails:
+                        emails.append(em)
+                        
+                found_phones = _PHONE_RE.findall(readme_text)
+                for ph in found_phones:
+                    # Basic cleanup
+                    clean_ph = "".join(c for c in ph if c.isdigit() or c == "+")
+                    if len(clean_ph) >= 10 and clean_ph not in phones:
+                        phones.append(clean_ph)
+
             links = Links(
                 github=original_url,
                 portfolio=data.get("blog") if data.get("blog") else None,
-                linkedin=None,
                 other=[],
             )
 
@@ -103,7 +120,7 @@ class GithubParser(BaseParser):
                 source_weight=SOURCE_WEIGHTS.get(self.source_type, 0.4),
                 full_name=data.get("name") or data.get("login"),
                 emails=emails,
-                phones=[],
+                phones=phones,
                 location=location,
                 links=links,
                 headline=data.get("bio"),
@@ -134,13 +151,32 @@ class GithubParser(BaseParser):
             emails=[],
             phones=[],
             location=None,
-            links=Links(github=original_url, linkedin=None, portfolio=None, other=[]),
+            links=Links(github=original_url, portfolio=None, other=[]),
             headline=None,
             years_experience=None,
             skills=[],
             experience=[],
             education=[],
         )
+
+    def _fetch_readme(self, username: str, headers: dict) -> str | None:
+        """Attempt to fetch the user's profile README.md."""
+        urls = [
+            f"https://raw.githubusercontent.com/{username}/{username}/main/README.md",
+            f"https://raw.githubusercontent.com/{username}/{username}/master/README.md"
+        ]
+        for url in urls:
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=3) as response:
+                    return response.read().decode('utf-8', errors='ignore')
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    continue
+                logger.debug("HTTP %s fetching README for %s", e.code, username)
+            except Exception as e:
+                logger.debug("Error fetching README for %s: %s", username, e)
+        return None
 
     def _fetch_languages(self, username: str, headers: dict) -> list[str]:
         """Fetch a user's repositories and extract their languages to use as skills."""
