@@ -203,6 +203,42 @@ function handleFiles(files) {
     }
 }
 
+// --- URL Ingestion Logic ---
+const urlInput = document.getElementById('urlInput');
+const urlAddBtn = document.getElementById('urlAddBtn');
+
+if (urlAddBtn && urlInput) {
+    urlAddBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const urlText = urlInput.value.trim();
+        if (!urlText) return;
+        
+        const isGithub = urlText.toLowerCase().includes('github.com');
+        const isLinkedin = urlText.toLowerCase().includes('linkedin.com/in');
+        
+        if (!isGithub && !isLinkedin) {
+            alert('Please enter a valid GitHub or LinkedIn profile URL.');
+            return;
+        }
+
+        // Create a blob file containing the URL
+        const blob = new Blob([urlText], { type: 'text/plain' });
+        // Generate a pseudo-random filename so it doesn't conflict
+        const prefix = isGithub ? 'github_' : 'linkedin_';
+        const file = new File([blob], `${prefix}${Date.now()}.txt`, { type: 'text/plain' });
+        
+        urlInput.value = '';
+        handleFiles([file]);
+    });
+
+    urlInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            urlAddBtn.click();
+        }
+    });
+}
+
 function removeFile(index) {
     selectedFiles.splice(index, 1);
     updateFileList();

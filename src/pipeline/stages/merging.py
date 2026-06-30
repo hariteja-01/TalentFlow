@@ -58,6 +58,9 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
     groups: dict[str, list[IntermediateRecord]] = defaultdict(list)
     # Track name-based groups as fallback
     name_to_group: dict[str, str] = {}
+    # Track URL-based groups as fallback
+    github_to_group: dict[str, str] = {}
+    linkedin_to_group: dict[str, str] = {}
 
     for record in records:
         # Try to find an existing group via email overlap
@@ -68,11 +71,22 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
                 matching_group = email_to_group[email_lower]
                 break
 
-        # Fallback: try exact name match
+        # Fallback 1: try exact name match
         if matching_group is None and record.full_name:
             name_key = record.full_name.strip().lower()
             if name_key in name_to_group:
                 matching_group = name_to_group[name_key]
+
+        # Fallback 2: try URL overlap (GitHub or LinkedIn)
+        if matching_group is None and record.links:
+            if record.links.github:
+                gh_lower = record.links.github.strip().lower().rstrip('/')
+                if gh_lower in github_to_group:
+                    matching_group = github_to_group[gh_lower]
+            if matching_group is None and record.links.linkedin:
+                li_lower = record.links.linkedin.strip().lower().rstrip('/')
+                if li_lower in linkedin_to_group:
+                    matching_group = linkedin_to_group[li_lower]
 
         # Create new group if no match found
         if matching_group is None:
@@ -85,6 +99,15 @@ def _group_by_identity(records: list[IntermediateRecord]) -> dict[str, list[Inte
         # Register name to this group
         if record.full_name:
             name_to_group[record.full_name.strip().lower()] = matching_group
+
+        # Register URLs to this group
+        if record.links:
+            if record.links.github:
+                gh_lower = record.links.github.strip().lower().rstrip('/')
+                github_to_group[gh_lower] = matching_group
+            if record.links.linkedin:
+                li_lower = record.links.linkedin.strip().lower().rstrip('/')
+                linkedin_to_group[li_lower] = matching_group
 
         groups[matching_group].append(record)
 
