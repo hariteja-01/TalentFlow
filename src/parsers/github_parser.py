@@ -116,7 +116,43 @@ class GithubParser(BaseParser):
                     if len(clean_ph) >= 10 and clean_ph not in phones:
                         phones.append(clean_ph)
 
+            # Fetch social accounts to find linkedin
+            linkedin_url = None
+            try:
+                social_req = urllib.request.Request(f"https://api.github.com/users/{username}/social_accounts", headers=headers)
+                with urllib.request.urlopen(social_req, timeout=3) as social_resp:
+                    social_data = json.loads(social_resp.read().decode())
+                    for acc in social_data:
+                        provider = acc.get("provider", "").lower()
+                        url = acc.get("url", "")
+                        if provider == "linkedin" or "linkedin.com" in url.lower():
+                            linkedin_url = url
+                            break
+            except Exception:
+                pass
+
+            # Fallback to scrape the HTML profile page directly if API social_accounts fails or doesn't have it
+            if not linkedin_url:
+                try:
+                    html_req = urllib.request.Request(f"https://github.com/{username}", headers=headers)
+                    with urllib.request.urlopen(html_req, timeout=3) as html_resp:
+                        html_text = html_resp.read().decode('utf-8', errors='ignore')
+                        # Look for linkedin.com links
+                        import re
+                        li_match = re.search(r'href="([^"]*linkedin\.com/[^"]+)"', html_text)
+                        if li_match:
+                            linkedin_url = li_match.group(1)
+                except Exception:
+                    pass
+            
+            # Final fallback: Check if company field contains a LinkedIn path like "company/xyz"
+            if not linkedin_url:
+                company = (data.get("company") or "").strip()
+                if company.startswith("company/") or company.startswith("in/"):
+                    linkedin_url = f"https://www.linkedin.com/{company}"
+
             links = Links(
+                linkedin=linkedin_url,
                 github=original_url,
                 portfolio=data.get("blog") if data.get("blog") else None,
                 other=[],
