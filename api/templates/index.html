@@ -90,9 +90,9 @@
             <h3 class="upload-text">Drag & Drop or Click to Upload</h3>
             <p class="upload-subtext">Supports .json, .csv, .txt, .pdf, and .docx</p>
 
-            <div style="margin-top: 1.5rem; width: 100%; max-width: 500px; display: flex; gap: 0.5rem; justify-content: center; z-index: 10;" onclick="event.stopPropagation()">
-                <input type="url" id="urlInput" class="modal-input" placeholder="Or paste GitHub / LinkedIn URL" style="margin-bottom: 0; width: 100%;" aria-label="Profile URL Input">
-                <button class="btn" id="urlAddBtn" style="padding: 0.875rem 1.5rem;" aria-label="Add URL to pipeline">Add URL</button>
+            <div style="margin-top: 1.5rem; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; z-index: 10;" onclick="event.stopPropagation()">
+                <textarea id="urlInput" class="modal-input" placeholder="Paste GitHub URLs (one per line or comma-separated)" style="margin-bottom: 0; width: 100%; min-height: 80px; resize: vertical;" aria-label="Profile URL Input"></textarea>
+                <button class="btn" id="urlAddBtn" style="padding: 0.875rem 1.5rem; width: 100%;" aria-label="Add URLs to pipeline">Add URLs</button>
             </div>
             
             <input type="file" id="fileInput" multiple accept=".json,.csv,.txt,.pdf,.docx" aria-hidden="true" tabindex="-1">

@@ -212,23 +212,27 @@ if (urlAddBtn && urlInput) {
         e.stopPropagation();
         const urlText = urlInput.value.trim();
         if (!urlText) return;
-        
-        const isGithub = urlText.toLowerCase().includes('github.com');
-        const isLinkedin = urlText.toLowerCase().includes('linkedin.com/in');
-        
-        if (!isGithub && !isLinkedin) {
-            alert('Please enter a valid GitHub or LinkedIn profile URL.');
-            return;
-        }
+        const lines = urlText.split(/[\n,]+/).map(l => l.trim()).filter(l => l);
+        if (lines.length === 0) return;
 
-        // Create a blob file containing the URL
-        const blob = new Blob([urlText], { type: 'text/plain' });
-        // Generate a pseudo-random filename so it doesn't conflict
-        const prefix = isGithub ? 'github_' : 'linkedin_';
-        const file = new File([blob], `${prefix}${Date.now()}.txt`, { type: 'text/plain' });
-        
-        urlInput.value = '';
-        handleFiles([file]);
+        let addedCount = 0;
+        lines.forEach(urlLine => {
+            const isGithub = urlLine.toLowerCase().includes('github.com');
+            if (isGithub) {
+                const blob = new Blob([urlLine], { type: 'text/plain' });
+                const file = new File([blob], `github_${Date.now()}_${addedCount}.txt`, { type: 'text/plain' });
+                selectedFiles.push(file);
+                addedCount++;
+            }
+        });
+
+        if (addedCount > 0) {
+            urlInput.value = '';
+            updateFileList();
+            processBtn.style.display = 'block';
+        } else {
+            alert('Please enter a valid GitHub profile URL.');
+        }
     });
 
     urlInput.addEventListener('keydown', (e) => {
