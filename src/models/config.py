@@ -32,7 +32,7 @@ class FieldConfig(BaseModel):
 
 
 class OutputConfig(BaseModel):
-    """Top-level output configuration.
+    """Configuration schema for runtime output projection and field selection.
 
     Attributes:
         fields: List of field specifications for the output.
