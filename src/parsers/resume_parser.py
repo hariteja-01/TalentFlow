@@ -1,13 +1,9 @@
 """Plain-text resume parser — extracts candidate data via regex heuristics.
 
-This is deliberately regex-based rather than ML-based:
-  - Deterministic: same input always produces same output
-  - No API keys or model downloads needed
-  - Fast and self-contained
-  - Tradeoff: less accurate on unusual resume formats
-
-The parser works by identifying sections (EXPERIENCE, EDUCATION, SKILLS)
-and applying targeted extraction patterns within each section.
+This parser uses deterministic regex patterns rather than ML models, ensuring
+consistent outputs without requiring API keys or heavy dependencies. It works
+by identifying sections (EXPERIENCE, EDUCATION, SKILLS) and applying targeted
+extraction patterns within each logical block.
 """
 
 from __future__ import annotations
