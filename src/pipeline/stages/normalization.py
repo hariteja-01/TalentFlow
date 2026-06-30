@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 def normalize_record(record: IntermediateRecord) -> IntermediateRecord:
     """Apply all normalizations to a single IntermediateRecord.
 
-    Returns a new record — does not mutate the input.
+    Returns a new normalized record — does not mutate the original input.
     """
     normalized_phones = normalize_phones(record.phones)
     normalized_location = normalize_location(record.location)

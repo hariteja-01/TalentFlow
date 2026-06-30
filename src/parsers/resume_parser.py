@@ -110,7 +110,7 @@ class ResumeParser(BaseParser):
         return "resume"
 
     def parse(self, file_path: Path) -> list[IntermediateRecord]:
-        """Parse a resume file (txt, pdf, docx)."""
+        """Parse a resume file (.txt, .pdf, .docx)."""
         ext = file_path.suffix.lower()
         text = ""
         
