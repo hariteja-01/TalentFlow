@@ -151,36 +151,20 @@ class ResumeParser(BaseParser):
         """Extract all fields from resume text."""
         sections = self._split_sections(text)
 
-        # Extract contact info from the full text (usually in header)
-        emails = list(dict.fromkeys(
-            e.lower() for e in _EMAIL_RE.findall(text)
-        ))
+        emails = list(dict.fromkeys(e.lower() for e in _EMAIL_RE.findall(text)))
+        
+        # Phone regex often over-matches numeric sequences (e.g. zip codes, IDs)
+        # We filter out matches with fewer than 7 digits to reduce noise.
         phones = list(dict.fromkeys(_PHONE_RE.findall(text)))
-        # Clean up phone numbers — remove very short matches (likely not phones)
         phones = [p.strip() for p in phones if len(re.sub(r"\D", "", p)) >= 7]
 
-        # Extract name — usually the first non-empty line
         name = self._extract_name(text)
-
-        # Extract links
         links = self._extract_links(text)
-
-        # Extract location
         location = self._extract_location(text)
-
-        # Extract skills from skills section or full text
         skills = self._extract_skills(sections.get("skills", ""), text)
-
-        # Extract experience
         experience = self._extract_experience(sections.get("experience", ""))
-
-        # Extract education
         education = self._extract_education(sections.get("education", ""))
-
-        # Extract headline from summary/profile section
         headline = self._extract_headline(sections.get("summary", ""))
-
-        # Estimate years of experience from work history
         yoe = self._estimate_yoe(experience)
 
         return IntermediateRecord(

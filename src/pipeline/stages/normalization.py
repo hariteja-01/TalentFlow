@@ -21,21 +21,14 @@ def normalize_record(record: IntermediateRecord) -> IntermediateRecord:
 
     Returns a new record — does not mutate the input.
     """
-    # Normalize phones to E.164
     normalized_phones = normalize_phones(record.phones)
-
-    # Normalize location
     normalized_location = normalize_location(record.location)
-
-    # Canonicalize skill names
     normalized_skills = canonicalize_skills(record.skills)
 
-    # Normalize emails (lowercase, strip whitespace)
     normalized_emails = list(dict.fromkeys(
         e.strip().lower() for e in record.emails if e.strip()
     ))
 
-    # Normalize dates in experience entries
     normalized_experience = []
     for exp in record.experience:
         normalized_experience.append(exp.model_copy(update={
@@ -43,14 +36,12 @@ def normalize_record(record: IntermediateRecord) -> IntermediateRecord:
             "end": normalize_date(exp.end),
         }))
 
-    # Normalize education end years
     normalized_education = []
     for edu in record.education:
         normalized_education.append(edu.model_copy(update={
             "end_year": normalize_year(edu.end_year) if edu.end_year else edu.end_year,
         }))
 
-    # Normalize full name (strip, title case if all lowercase/uppercase)
     normalized_name = record.full_name
     if normalized_name:
         normalized_name = normalized_name.strip()
