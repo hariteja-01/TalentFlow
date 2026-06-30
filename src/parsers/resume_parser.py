@@ -242,6 +242,11 @@ class ResumeParser(BaseParser):
             if _DATE_RANGE_RE.search(line):
                 continue
             
+            # Avoid corporate indicators
+            lower_line = line.lower()
+            if any(indicator in lower_line.split() for indicator in ["limited", "llc", "inc", "inc.", "pvt", "ltd", "corporation", "corp", "company"]):
+                continue
+
             # A name line is typically 1-5 words, mostly letters
             words = line.split()
             if 1 <= len(words) <= 5 and all(re.match(r"^[A-Za-zÀ-ÿ]+[-']?[A-Za-zÀ-ÿ]*$", w) for w in words):
@@ -291,15 +296,14 @@ class ResumeParser(BaseParser):
 
     @staticmethod
     def _extract_skills(skills_section: str, full_text: str) -> list[str]:
-        """Extract skills from the skills section or fall back to full text."""
-        text = skills_section or full_text
-        if not text.strip():
+        """Extract skills from the skills section (conservative)."""
+        if not skills_section.strip():
             return []
 
         # Skills are typically comma, pipe, or bullet-separated
         # First try to find a clear list
         skills = []
-        for line in text.split("\n"):
+        for line in skills_section.split("\n"):
             clean_line = line.strip().lower().rstrip(":")
             if clean_line in _SUBHEADERS:
                 continue
@@ -321,10 +325,21 @@ class ResumeParser(BaseParser):
                 if len(line.split()) <= 4 and len(line) < 50:
                     skills.append(line)
 
-        # Deduplicate while preserving order
+        def is_valid_skill(s: str) -> bool:
+            s = s.strip()
+            if not s or len(s) > 40: return False
+            if re.match(r"^\d+$", s): return False
+            if re.search(r"(?i)\b(?:floor|street|road|code|id|no\.|number|limited|ltd)\b", s): return False
+            if ":" in s: return False
+            if not re.search(r"[A-Za-z]", s): return False
+            return True
+
+        # Deduplicate while preserving order, and validate
         seen: set[str] = set()
         unique = []
         for s in skills:
+            if not is_valid_skill(s):
+                continue
             key = s.lower()
             if key not in seen:
                 seen.add(key)
