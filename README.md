@@ -43,7 +43,7 @@ Modern HR teams grapple with fragmented candidate data scattered across Applican
 
 ## 🏗 System Architecture & End-to-End Pipeline Flow
 
-TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceablity, testability, and guarantees that errors in one document never poison the pipeline.
+TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceability, testability, and guarantees that errors in one document never poison the pipeline.
 
 ```mermaid
 graph TD
