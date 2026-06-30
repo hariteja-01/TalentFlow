@@ -113,7 +113,12 @@ def _merge_group(records: list[IntermediateRecord]) -> CanonicalProfile:
     - Experience/Education: collect all, deduplicate, sort
     """
     # Sort records by source_weight descending so highest-weight is first
-    sorted_records = sorted(records, key=lambda r: r.source_weight, reverse=True)
+    # Break ties using source_name for strict determinism
+    sorted_records = sorted(
+        records, 
+        key=lambda r: (r.source_weight, r.source_name), 
+        reverse=True
+    )
     provenance: list[Provenance] = []
 
     # --- Scalar fields: pick from highest-weight source ---
