@@ -26,6 +26,7 @@ const errorBanner = document.getElementById('errorBanner');
 const errorTitle = document.getElementById('errorTitle');
 const errorMessage = document.getElementById('errorMessage');
 const sidebar = document.getElementById('sidebar');
+const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
 
 let selectedFiles = [];
 
@@ -34,13 +35,31 @@ function closeError() {
     errorBanner.style.display = 'none';
 }
 
-// --- User Identity Management ---
-function initUser() {
+// --- User Identity Management & Sidebar ---
+function initApp() {
+    // User Name
     const savedName = localStorage.getItem('talentflow_username');
     if (savedName) {
         setProfileName(savedName);
     } else {
         openSettings();
+    }
+
+    // Sidebar state
+    const sidebarCollapsed = localStorage.getItem('talentflow_sidebar_collapsed');
+    if (sidebarCollapsed === 'true' && sidebar) {
+        sidebar.classList.add('collapsed');
+        sidebar.setAttribute('aria-expanded', 'false');
+    }
+
+    if (sidebarToggleBtn && sidebar) {
+        sidebarToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('collapsed');
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            localStorage.setItem('talentflow_sidebar_collapsed', isCollapsed);
+            sidebar.setAttribute('aria-expanded', !isCollapsed);
+        });
     }
 }
 
@@ -366,6 +385,9 @@ function copyJson(idx) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    initUser();
+    initApp();
     fetchSamplesList();
+    if (fileInput) {
+        fileInput.value = '';
+    }
 });

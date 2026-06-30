@@ -24,32 +24,37 @@
     <!-- Mobile Header Toggle -->
     <button class="mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
 
-    <aside id="sidebar">
+    <aside id="sidebar" aria-expanded="true">
         <div class="logo-container">
-            <img src="/static/logo.gif" alt="TalentFlow Logo" class="logo-icon-img" />
-            <div class="logo-text">TalentFlow</div>
+            <img src="/static/logo.png" alt="TalentFlow Logo" class="logo-icon-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
+            <span class="logo-text">TalentFlow</span>
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar" title="Toggle Sidebar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
         </div>
         
         <nav>
             <a class="nav-item active" role="button" tabindex="0">
-                <span>⚡</span>
-                <span>Process Pipeline</span>
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Process Pipeline</span>
             </a>
             <a class="nav-item" href="https://github.com/hariteja-01/TalentFlow" target="_blank" rel="noopener noreferrer">
-                <span>📚</span>
-                <span>Documentation</span>
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">Documentation</span>
             </a>
             <a class="nav-item" onclick="openSettings()" role="button" tabindex="0">
-                <span>⚙️</span>
-                <span>Settings</span>
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
             </a>
         </nav>
 
-        <div class="user-profile" onclick="openSettings()">
-            <div class="avatar" id="sidebarAvatarInitials">U</div>
-            <div>
-                <div style="font-size: 0.9rem; font-weight: 500;" id="sidebarUserName">Loading...</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Admin</div>
+        <div class="user-profile" id="userProfile" title="Mock Admin User">
+            <div class="avatar" id="userAvatar">M</div>
+            <div class="user-info">
+                <div style="font-weight: 600; font-size: 0.95rem; color: #ffffff;">mock2</div>
+                <div style="font-size: 0.8rem; color: #d4d4d8;">Admin</div>
             </div>
         </div>
     </aside>
