@@ -478,8 +478,11 @@ main {
     color: var(--primary);
     font-size: 1.1rem;
     background: rgba(139, 92, 246, 0.1);
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
+    width: 28px; 
+    height: 28px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     border-radius: 6px;
 }
 
