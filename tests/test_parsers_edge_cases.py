@@ -1,7 +1,9 @@
 """Edge case tests for all parsers."""
 
 import pytest
+import json
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 
 from src.parsers.resume_parser import ResumeParser, _is_date_range
 from src.parsers.csv_parser import CsvParser
@@ -106,6 +108,7 @@ def test_github_readme_scraping(mock_urlopen, tmp_path):
     
     # Mock the API profile response
     mock_api_response = MagicMock()
+    mock_api_response.__enter__.return_value = mock_api_response
     mock_api_response.read.return_value = json.dumps({
         "login": "testuser",
         "name": "Test User",
@@ -114,10 +117,12 @@ def test_github_readme_scraping(mock_urlopen, tmp_path):
     
     # Mock the language API response
     mock_lang_response = MagicMock()
+    mock_lang_response.__enter__.return_value = mock_lang_response
     mock_lang_response.read.return_value = json.dumps([]).encode('utf-8')
     
     # Mock the README response
     mock_readme_response = MagicMock()
+    mock_readme_response.__enter__.return_value = mock_readme_response
     mock_readme_response.read.return_value = b"Contact me at testuser123@example.com or +1-415-555-1234."
     
     # Setup mock to return these in order
