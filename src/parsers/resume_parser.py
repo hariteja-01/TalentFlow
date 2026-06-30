@@ -92,7 +92,7 @@ _DEGREE_RE = re.compile(
     re.IGNORECASE | re.MULTILINE,
 )
 
-_YEAR_RE = re.compile(r"\b(19|20)\d{2}\b")
+_YEAR_RE = re.compile(r"\b(?:19|20)\d{2}\b")
 
 # Location: "City, State", "City, State, Country", or "City, State, Country, Zipcode"
 _LOCATION_LINE_RE = re.compile(
@@ -100,6 +100,22 @@ _LOCATION_LINE_RE = re.compile(
     r"(?P<region>[a-zA-Z \t]+?)(?:,\s*(?P<country>[a-zA-Z \t]+?))?(?:,\s*(?P<zip>\d{4,}))?\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
+
+
+def _is_date_range(text: str) -> bool:
+    """Check if text is actually a date range, not an institution."""
+    date_range_patterns = [
+        r'^\s*(?:[A-Za-z]+)?\s+\d{4}\s*[-–]\s*(?:[A-Za-z]+)?\s*\d{0,4}\s*$',  # August 2023 - Present
+        r'^\s*\w{3,9}\s+\d{4}\s*[-–]\s*\w{3,9}\s+\d{4}\s*$',  # June 2021 - May 2023
+        r'^\s*\d{4}\s*[-–]\s*\d{4}\s*$',  # 2020-2023
+        r'^\s*\d{1,2}/\d{4}\s*[-–]\s*\d{1,2}/\d{4}\s*$',  # 06/2020 - 04/2021
+    ]
+    
+    # Check if text matches date pattern or includes 'present'/'current' alone
+    if re.match(r'^\s*(present|current|now)\s*$', text.strip(), re.IGNORECASE):
+        return True
+        
+    return any(re.match(pattern, text.strip(), re.IGNORECASE) for pattern in date_range_patterns)
 
 
 class ResumeParser(BaseParser):
@@ -398,8 +414,16 @@ class ResumeParser(BaseParser):
 
         entries: list[Education] = []
         lines = [line.strip() for line in edu_section.split("\n") if line.strip()]
+        
+        logger.debug("Education section found: %s...", edu_section[:200])
+
+        existing_institutions: dict[str, Education] = {}
 
         for i, line in enumerate(lines):
+            # Skip if it's purely a date range line
+            if _is_date_range(line):
+                continue
+                
             match = _EXT_DEGREE_RE.search(line)
             if match:
                 degree = match.group("degree").strip()
@@ -411,58 +435,116 @@ class ResumeParser(BaseParser):
                 if year_match:
                     end_year = int(year_match.group(0))
                 elif i > 0:
-                    year_match = _YEAR_RE.search(lines[i - 1])
-                    if year_match:
-                        end_year = int(year_match.group(0))
+                    prev_line = lines[i - 1]
+                    if _is_date_range(prev_line) or _YEAR_RE.search(prev_line):
+                        ym = _YEAR_RE.findall(prev_line)
+                        if ym:
+                            end_year = int(ym[-1])
+                elif i + 1 < len(lines):
+                    next_line = lines[i + 1]
+                    if _is_date_range(next_line) or _YEAR_RE.search(next_line):
+                        ym = _YEAR_RE.findall(next_line)
+                        if ym:
+                            end_year = int(ym[-1])
 
-                # Look backwards for institution
+                # Look for institution
                 institution = None
                 
                 # Check current line first for comma separated like "Degree in Field, Institution, Year"
                 if "," in line:
                     parts = [p.strip() for p in line.split(",")]
                     for part in parts:
-                        if not _EXT_DEGREE_RE.search(part) and not _YEAR_RE.search(part):
+                        if not _EXT_DEGREE_RE.search(part) and not _YEAR_RE.search(part) and not _is_date_range(part):
                             institution = part
                             break
 
-                if not institution:
-                    for j in range(i - 1, -1, -1):
-                        prev = lines[j]
-                        if not prev or 'education' in prev.lower() or _YEAR_RE.search(prev) or ',' in prev:
-                            continue
-                        institution = prev
-                        break
-
-                # Avoid duplicate creation if we already parsed this institution in a simpler fallback
-                entries.append(Education(
-                    institution=institution,
-                    degree=degree,
-                    field=field,
-                    end_year=end_year,
-                ))
-
-        # If regex didn't match anything, or missed some lines, try simpler line-by-line parsing
-        # But ensure we don't duplicate existing entries.
-        existing_institutions = {e.institution.lower() for e in entries if e.institution}
-        
-        for line in lines:
-            if _EXT_DEGREE_RE.search(line):
-                continue  # Already handled by regex approach
+                # For finding nearest institution, compute distances
+                best_inst = institution
+                best_dist = 999
                 
+                if not institution:
+                    # Look backwards
+                    for j in range(i - 1, max(-1, i - 4), -1):
+                        prev = lines[j]
+                        if not prev or 'education' in prev.lower() or _is_date_range(prev) or _EXT_DEGREE_RE.search(prev):
+                            continue
+                        dist = i - j
+                        best_inst = prev
+                        best_dist = dist
+                        break
+                        
+                    # Look forwards
+                    for j in range(i + 1, min(len(lines), i + 4)):
+                        nxt = lines[j]
+                        if not nxt or 'education' in nxt.lower() or _is_date_range(nxt) or _EXT_DEGREE_RE.search(nxt):
+                            continue
+                        dist = j - i
+                        if dist < best_dist:
+                            best_inst = nxt
+                        break
+                
+                institution = best_inst
+
+                if institution and not _is_date_range(institution):
+                    inst_key = institution.lower().strip()
+                    # Fuzzy match against existing keys
+                    matched_key = None
+                    for ek in existing_institutions.keys():
+                        if inst_key in ek or ek in inst_key:
+                            matched_key = ek
+                            break
+                            
+                    if matched_key:
+                        existing = existing_institutions[matched_key]
+                        if existing.degree != degree:
+                            new_entry = Education(institution=institution, degree=degree, field=field, end_year=end_year)
+                            entries.append(new_entry)
+                    else:
+                        new_entry = Education(institution=institution, degree=degree, field=field, end_year=end_year)
+                        entries.append(new_entry)
+                        existing_institutions[inst_key] = new_entry
+
+        # Fallback simpler line-by-line parsing
+        for i, line in enumerate(lines):
+            if _EXT_DEGREE_RE.search(line):
+                continue
+                
+            if _is_date_range(line):
+                continue
+
             year_match = _YEAR_RE.search(line)
             end_year = int(year_match.group(0)) if year_match else None
-            if end_year or any(kw in line.lower() for kw in ("university", "college", "institute", "school")):
+            
+            if any(kw in line.lower() for kw in ("university", "college", "institute", "school", "academy")):
                 inst = line.split(",")[0].strip() if "," in line else line
-                # Only add if it doesn't overlap with what we found
-                if inst.lower() not in existing_institutions:
-                    entries.append(Education(
-                        institution=inst,
-                        end_year=end_year,
-                    ))
-                    existing_institutions.add(inst.lower())
+                
+                if _is_date_range(inst):
+                    continue
+                    
+                inst_key = inst.lower().strip()
+                # Fuzzy match
+                is_dup = False
+                for ek in existing_institutions.keys():
+                    if inst_key in ek or ek in inst_key:
+                        is_dup = True
+                        break
+                        
+                if not is_dup:
+                    # Try to find year nearby if not in line
+                    if not end_year and i > 0 and _is_date_range(lines[i-1]):
+                        ym = _YEAR_RE.findall(lines[i-1])
+                        if ym: end_year = int(ym[-1])
+                    if not end_year and i + 1 < len(lines) and _is_date_range(lines[i+1]):
+                        ym = _YEAR_RE.findall(lines[i+1])
+                        if ym: end_year = int(ym[-1])
+                        
+                    new_entry = Education(institution=inst, end_year=end_year)
+                    entries.append(new_entry)
+                    existing_institutions[inst_key] = new_entry
 
+        logger.debug("Extracted %d education entries", len(entries))
         return entries
+
 
     @staticmethod
     def _extract_headline(summary_section: str) -> str | None:
