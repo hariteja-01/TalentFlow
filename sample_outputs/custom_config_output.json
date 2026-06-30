@@ -1,0 +1,69 @@
+[
+  {
+    "full_name": "Jane M. Doe",
+    "primary_email": "jane.doe@email.com",
+    "phone": "+14155552671",
+    "city": "San Francisco",
+    "country": "US",
+    "linkedin": "https://linkedin.com/in/janedoe",
+    "headline": "Senior Machine Learning Engineer",
+    "years_experience": 7.0,
+    "skills": [
+      "Python",
+      "Machine Learning",
+      "TensorFlow",
+      "Docker",
+      "SQL",
+      "Kubernetes",
+      "AWS",
+      "Deep Learning",
+      "PyTorch",
+      "Apache Spark",
+      "Data Engineering",
+      "Rest Apis",
+      "Git",
+      "CI/CD",
+      "Linux"
+    ],
+    "overall_confidence": 0.89
+  },
+  {
+    "full_name": "John Smith",
+    "primary_email": "john.smith@example.com",
+    "phone": "+442079460958",
+    "city": "London",
+    "country": "GB",
+    "linkedin": null,
+    "headline": "Full Stack Developer",
+    "years_experience": 4.0,
+    "skills": [
+      "JavaScript",
+      "React",
+      "Node.js",
+      "PostgreSQL",
+      "AWS",
+      "Docker"
+    ],
+    "overall_confidence": 0.77
+  },
+  {
+    "full_name": "Alex Rivera",
+    "primary_email": "alex.rivera@techmail.com",
+    "phone": "+16505558834",
+    "city": "Austin",
+    "country": "US",
+    "linkedin": null,
+    "headline": "Data Engineer",
+    "years_experience": 5.0,
+    "skills": [
+      "Python",
+      "Apache Spark",
+      "Apache Kafka",
+      "SQL",
+      "AWS",
+      "Docker",
+      "Terraform"
+    ],
+    "overall_confidence": 0.54
+  }
+]

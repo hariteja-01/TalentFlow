@@ -1,0 +1,91 @@
+Hari Teja Patnala
+Phagwara, Punjab, India, 144411
++91-9392329691 | patnalahariteja@gmail.com | linkedin.com/in/hari-teja-patnala | github.com/hariteja-01 |
+leetcode.com/u/hariteja01 | hariteja-patnala.vercel.app
+
+Education
+Lovely Professional University
+
+Phagwara, Punjab, India
+August 2023 - Present
+
+B.Tech in Computer Science & Engineering — CGPA: 9.18/10.0
+- Minors: Data Science, Financial Markets
+
+A.P Model School & Junior College
+Intermediate (PCM) — Percentage: 96.2%
+
+A.P Model School & Junior College
+Matriculation — Percentage: 97.5%
+
+Srikakulam, Andhra Pradesh, India
+June 2021 - May 2023
+Srikakulam, Andhra Pradesh, India
+June 2020 - April 2021
+
+Technical Skills
+Languages
+: C++, Python, JavaScript, SQL
+Frameworks & Libraries : React, HTML5, CSS3, Streamlit, Scikit-learn, NumPy, Pandas, Matplotlib, Seaborn
+Big Data & Databases : Apache Hadoop, Hive, HBase, Cassandra, MySQL
+Tools & Platforms
+: Git, GitHub, Linux, PowerBI, Tableau, Vercel, Render
+Core Concepts
+: Data Structures & Algorithms, OOP, Operating Systems, DBMS, Computer Networks
+
+Projects
+AlgoQuest - Algorithm Visualizer | React, TypeScript, Tailwind CSS | GitHub | Live
+July 2025 - August 2025
+- Built an interactive algorithm visualization platform with 16+ modules covering Dynamic Programming, Graph Algorithms,
+Backtracking, and Data Structures using React 18 and TypeScript.
+- Integrated multi-language code generation across 5 languages (C++, Python, JavaScript, Java, C#) with real-time step
+controls, dark/light mode, and Supabase backend for user profiles.
+Real Estate Analytics Engine | Python, Scikit-learn, Streamlit, SHAP | GitHub | Live
+February 2025 - May 2025
+- Developed a machine learning pipeline training 4 models on 1,00,000+ records sampled from a 1M+ real estate dataset
+spanning 21 years, achieving 99.98% R2 score and MAE of $465 with Extra Trees and Random Forest regressors.
+- Deployed a Streamlit application with 6 analytical modules featuring SHAP-based feature importance, Folium geospatial
+heatmaps, and multi-model benchmarking across RMSE and MAE performance metrics.
+Efficient Page Replacement Simulator | C++, Python, Matplotlib | GitHub | Live
+February 2025 - April 2025
+- Constructed a C++ simulation engine implementing 3 core OS memory management algorithms (FIFO, LRU, and Optimal)
+with configurable frame sizes and page reference sequences.
+- Designed a cross-language data pipeline connecting the C++ backend to Python visualization scripts and leveraged
+Matplotlib to compare page fault frequencies across all 3 algorithms.
+
+Honors & Achievements
+LeetCode 1000+ Problems Solved | Problem Solver
+August 2024 - Present
+- Ranked in the top 2.51 percentile of global competitors; consistently applied Graph theory, Tree traversals, and DP.
+Achievers Award | Lovely Professional University
+December 2025
+- Awarded for exceptional academic performance and distinction in NPTEL IIT Madras MOOC certifications.
+MumbaiHacks 2025 Finalist | Hackathon Finalist
+November 2025
+- Secured a finalist position at MumbaiHacks 2025 by developing and presenting a functional prototype under time-bound
+hackathon conditions.
+University Academic Excellence Award | Lovely Professional University
+- Recognized for outstanding academic performance, maintaining a 9.50 TGPA among 8,000+ CSE students.
+
+May 2024
+
+Certifications
+Oracle Cloud Infrastructure Data Science Professional | Certificate
+
+November 2025
+
+Oracle Cloud Infrastructure Developer Professional | Certificate
+
+October 2025
+
+IBM Python for Data Science, AI & Development | Certificate
+
+October 2025
+
+Social Networks - IIT Madras | Certificate
+Responsive Web Design Developer Certification - freeCodeCamp | Certificate
+
+May 2025
+November 2023
+
+

@@ -1,0 +1,34 @@
+Jane Doe
+San Francisco, CA
+janedoe@personal.com | jane.doe@email.com
+(415) 555-2671
+linkedin.com/in/janedoe
+github.com/janedoe
+
+SUMMARY
+Experienced ML engineer with 7+ years building production machine learning systems, 
+recommendation engines, and data pipelines at scale.
+
+SKILLS
+Python, Machine Learning, Deep Learning, TensorFlow, PyTorch, Docker, K8s, SQL, AWS, 
+Apache Spark, Data Engineering, REST APIs, Git, CI/CD, Linux
+
+EXPERIENCE
+
+Senior ML Engineer at TechCorp
+Jan 2020 - Present
+- Lead ML platform team of 5 engineers
+- Designed and deployed feature store serving 50M+ predictions/day
+- Reduced model training time by 40% through pipeline optimization
+- Mentored junior engineers and conducted technical interviews
+
+Junior Developer at StartupXYZ
+June 2017 - Dec 2019
+- Built backend services using Python and Flask
+- Implemented data pipelines using Apache Spark
+- Contributed to recommendation engine development
+
+EDUCATION
+
+M.S. in Computer Science, Stanford University, 2018
+B.S. in Mathematics, UC Berkeley, 2016

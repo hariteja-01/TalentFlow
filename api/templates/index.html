@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentFlow - Candidate Profile Transformer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Name Prompt Modal -->
+    <div class="modal-overlay" id="nameModal">
+        <div class="modal-card">
+            <h2 class="modal-title">Welcome to TalentFlow</h2>
+            <p class="modal-desc" style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Please enter your name to personalize your dashboard.</p>
+            <input type="text" id="userNameInput" class="modal-input" placeholder="e.g. Hari Teja" autocomplete="off">
+            <button class="btn" style="width: 100%;" onclick="saveUserName()">Continue</button>
+        </div>
+    </div>
+
+    <!-- Mobile Header Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+    <aside id="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">TF</div>
+            <div class="logo-text">TalentFlow</div>
+        </div>
+        
+        <nav>
+            <a class="nav-item active">
+                <span>⚡</span>
+                <span>Process Pipeline</span>
+            </a>
+            <a class="nav-item" href="https://github.com/hariteja-01/TalentFlow" target="_blank">
+                <span>📚</span>
+                <span>Documentation</span>
+            </a>
+            <a class="nav-item" onclick="openSettings()">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="user-profile" onclick="openSettings()">
+            <div class="avatar" id="sidebarAvatarInitials">U</div>
+            <div>
+                <div style="font-size: 0.9rem; font-weight: 500;" id="sidebarUserName">Loading...</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Admin</div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="page-header">
+            <h1 class="page-title">Candidate Processing Pipeline</h1>
+            <p class="page-subtitle">Upload multiple data sources (JSON ATS payloads, CSV HRIS exports, and Resumes) to generate unified canonical profiles.</p>
+        </div>
+
+        <div class="sample-loader-container" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-shrink: 0; flex-wrap: wrap;">
+            <select id="sampleSelect" class="modal-input" style="width: auto; min-width: 300px; margin-bottom: 0;">
+                <option value="">-- Or select a provided sample file --</option>
+            </select>
+            <button class="btn-outline" style="padding: 0.875rem 1.5rem; margin-bottom: 0;" onclick="loadSampleFile()">Load Sample</button>
+        </div>
+
+        <div class="upload-card" id="dropzone">
+            <div class="upload-icon">✨</div>
+            <h3 class="upload-text">Drag & Drop candidate files here</h3>
+            <p class="upload-subtext">Supports .json, .csv, .txt, .pdf, and .docx</p>
+            
+            <input type="file" id="fileInput" multiple accept=".json,.csv,.txt,.pdf,.docx">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">
+                Select Files
+            </button>
+            
+            <div class="file-list" id="fileList"></div>
+            
+            <button class="btn" id="processBtn" style="display: none; margin-top: 2rem; width: 100%; max-width: 600px;" onclick="processFiles()">
+                🚀 Run Transformation Pipeline
+            </button>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="loading-container" id="loadingContainer">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted); font-size: 1.1rem; text-align: center;">Aggregating sources, normalizing data, and resolving conflicts...</p>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="section-header">
+                <h2>Generated Canonical Profiles</h2>
+                <button class="btn-outline" onclick="resetPipeline()">Process New Batch</button>
+            </div>
+            
+            <div class="profile-grid" id="profileGrid">
+                <!-- Profile Cards Will Be Injected Here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

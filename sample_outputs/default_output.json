@@ -1,0 +1,757 @@
+[
+  {
+    "candidate_id": "deda2dc12c2a",
+    "full_name": "Hari Teja Patnala",
+    "emails": [
+      "patnalahariteja@gmail.com"
+    ],
+    "phones": [
+      "+919392329691"
+    ],
+    "location": {
+      "city": "Phagwara",
+      "region": "Punjab",
+      "country": "IN"
+    },
+    "links": {
+      "linkedin": "linkedin.com/in/hari-teja-patnala",
+      "github": "github.com/hariteja-01",
+      "portfolio": "leetcode.com/u/hariteja01",
+      "other": []
+    },
+    "headline": null,
+    "years_experience": null,
+    "skills": [
+      {
+        "name": "C++",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Python",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "JavaScript",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "SQL",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Git",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Github",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Linux",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Powerbi",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Tableau",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Vercel",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Render",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Data Structures & Algorithms",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Object-Oriented Programming",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Operating Systems",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Dbms",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      },
+      {
+        "name": "Computer Networks",
+        "confidence": 0.65,
+        "sources": [
+          "12318279_Hari_Teja.txt"
+        ]
+      }
+    ],
+    "experience": [],
+    "education": [
+      {
+        "institution": "Lovely Professional University",
+        "degree": "B.Tech",
+        "field": "Computer Science & Engineering",
+        "end_year": 2023
+      },
+      {
+        "institution": "August 2023 - Present",
+        "degree": null,
+        "field": null,
+        "end_year": 2023
+      },
+      {
+        "institution": "June 2021 - May 2023",
+        "degree": null,
+        "field": null,
+        "end_year": 2021
+      },
+      {
+        "institution": "June 2020 - April 2021",
+        "degree": null,
+        "field": null,
+        "end_year": 2020
+      },
+      {
+        "institution": "A.P Model School & Junior College",
+        "degree": "Intermediate",
+        "field": null,
+        "end_year": null
+      },
+      {
+        "institution": "A.P Model School & Junior College",
+        "degree": "Matriculation",
+        "field": null,
+        "end_year": null
+      }
+    ],
+    "provenance": [
+      {
+        "field": "full_name",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "location",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "links.linkedin",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-first-seen"
+      },
+      {
+        "field": "links.github",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-first-seen"
+      },
+      {
+        "field": "links.portfolio",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-first-seen"
+      },
+      {
+        "field": "emails",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-union"
+      },
+      {
+        "field": "phones",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-union"
+      },
+      {
+        "field": "skills",
+        "source": "multiple",
+        "method": "merged-union-dedup"
+      },
+      {
+        "field": "education",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "12318279_Hari_Teja.txt",
+        "method": "merged-collected"
+      }
+    ],
+    "overall_confidence": 0.434
+  },
+  {
+    "candidate_id": "06d24a918a15",
+    "full_name": "Jane M. Doe",
+    "emails": [
+      "jane.doe@email.com",
+      "jane@techcorp.com",
+      "janedoe@personal.com"
+    ],
+    "phones": [
+      "+14155552671"
+    ],
+    "location": {
+      "city": "San Francisco",
+      "region": "California",
+      "country": "US"
+    },
+    "links": {
+      "linkedin": "https://linkedin.com/in/janedoe",
+      "github": "github.com/janedoe",
+      "portfolio": null,
+      "other": []
+    },
+    "headline": "Senior Machine Learning Engineer",
+    "years_experience": 7.0,
+    "skills": [
+      {
+        "name": "Python",
+        "confidence": 0.95,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Machine Learning",
+        "confidence": 0.95,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "TensorFlow",
+        "confidence": 0.95,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Docker",
+        "confidence": 0.95,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "SQL",
+        "confidence": 0.8,
+        "sources": [
+          "candidate_api.json",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Kubernetes",
+        "confidence": 0.8,
+        "sources": [
+          "candidates.csv",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "AWS",
+        "confidence": 0.8,
+        "sources": [
+          "candidates.csv",
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Deep Learning",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "PyTorch",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Apache Spark",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Data Engineering",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "REST APIs",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Git",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "CI/CD",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      },
+      {
+        "name": "Linux",
+        "confidence": 0.65,
+        "sources": [
+          "resume_jane_doe.txt"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "company": "TechCorp",
+        "title": "Machine Learning Engineer",
+        "start": "2020-01",
+        "end": "2019-12",
+        "summary": "Leading ML platform development, model training pipelines, and feature store infrastructure."
+      },
+      {
+        "company": "StartupXYZ",
+        "title": "Junior Developer",
+        "start": "2017-06",
+        "end": "2019-12",
+        "summary": "Built backend services using Python and Flask\nImplemented data pipelines using Apache Spark\nContributed to recommendation engine development"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Stanford University",
+        "degree": "MS",
+        "field": "Computer Science",
+        "end_year": 2018
+      },
+      {
+        "institution": "Stanford University",
+        "degree": "M.S",
+        "field": null,
+        "end_year": 2018
+      },
+      {
+        "institution": "UC Berkeley",
+        "degree": "B.S",
+        "field": null,
+        "end_year": 2016
+      }
+    ],
+    "provenance": [
+      {
+        "field": "full_name",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "headline",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "years_experience",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "location",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "links.linkedin",
+        "source": "candidate_api.json",
+        "method": "merged-first-seen"
+      },
+      {
+        "field": "links.github",
+        "source": "resume_jane_doe.txt",
+        "method": "merged-first-seen"
+      },
+      {
+        "field": "emails",
+        "source": "candidate_api.json",
+        "method": "merged-union"
+      },
+      {
+        "field": "phones",
+        "source": "candidate_api.json",
+        "method": "merged-union"
+      },
+      {
+        "field": "skills",
+        "source": "multiple",
+        "method": "merged-union-dedup"
+      },
+      {
+        "field": "experience",
+        "source": "candidate_api.json",
+        "method": "merged-collected"
+      },
+      {
+        "field": "experience",
+        "source": "resume_jane_doe.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "candidate_api.json",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "resume_jane_doe.txt",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "resume_jane_doe.txt",
+        "method": "merged-collected"
+      }
+    ],
+    "overall_confidence": 0.89
+  },
+  {
+    "candidate_id": "8e621e3d0368",
+    "full_name": "John Smith",
+    "emails": [
+      "john.smith@example.com"
+    ],
+    "phones": [
+      "+442079460958"
+    ],
+    "location": {
+      "city": "London",
+      "region": null,
+      "country": "GB"
+    },
+    "links": null,
+    "headline": "Full Stack Developer",
+    "years_experience": 4.0,
+    "skills": [
+      {
+        "name": "JavaScript",
+        "confidence": 0.8,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "React",
+        "confidence": 0.8,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "Node.js",
+        "confidence": 0.8,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "PostgreSQL",
+        "confidence": 0.8,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "AWS",
+        "confidence": 0.8,
+        "sources": [
+          "candidate_api.json",
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "Docker",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "company": "WebCo Ltd",
+        "title": "Full Stack Developer",
+        "start": "2021-03",
+        "end": null,
+        "summary": "Building scalable web applications with React and Node.js."
+      }
+    ],
+    "education": [
+      {
+        "institution": "Imperial College London",
+        "degree": "BSc",
+        "field": "Computing",
+        "end_year": 2020
+      }
+    ],
+    "provenance": [
+      {
+        "field": "full_name",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "headline",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "years_experience",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "location",
+        "source": "candidate_api.json",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "emails",
+        "source": "candidate_api.json",
+        "method": "merged-union"
+      },
+      {
+        "field": "phones",
+        "source": "candidate_api.json",
+        "method": "merged-union"
+      },
+      {
+        "field": "skills",
+        "source": "multiple",
+        "method": "merged-union-dedup"
+      },
+      {
+        "field": "experience",
+        "source": "candidate_api.json",
+        "method": "merged-collected"
+      },
+      {
+        "field": "education",
+        "source": "candidate_api.json",
+        "method": "merged-collected"
+      }
+    ],
+    "overall_confidence": 0.77
+  },
+  {
+    "candidate_id": "7b86cf1cecfa",
+    "full_name": "Alex Rivera",
+    "emails": [
+      "alex.rivera@techmail.com"
+    ],
+    "phones": [
+      "+16505558834"
+    ],
+    "location": {
+      "city": "Austin",
+      "region": "Texas",
+      "country": "US"
+    },
+    "links": null,
+    "headline": "Data Engineer",
+    "years_experience": 5.0,
+    "skills": [
+      {
+        "name": "Python",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "Apache Spark",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "Apache Kafka",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "SQL",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "AWS",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "Docker",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      },
+      {
+        "name": "Terraform",
+        "confidence": 0.65,
+        "sources": [
+          "candidates.csv"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "company": "DataFlow Inc",
+        "title": "Data Engineer",
+        "start": null,
+        "end": null,
+        "summary": null
+      }
+    ],
+    "education": [],
+    "provenance": [
+      {
+        "field": "full_name",
+        "source": "candidates.csv",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "headline",
+        "source": "candidates.csv",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "years_experience",
+        "source": "candidates.csv",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "location",
+        "source": "candidates.csv",
+        "method": "merged-highest-weight"
+      },
+      {
+        "field": "emails",
+        "source": "candidates.csv",
+        "method": "merged-union"
+      },
+      {
+        "field": "phones",
+        "source": "candidates.csv",
+        "method": "merged-union"
+      },
+      {
+        "field": "skills",
+        "source": "multiple",
+        "method": "merged-union-dedup"
+      },
+      {
+        "field": "experience",
+        "source": "candidates.csv",
+        "method": "merged-collected"
+      }
+    ],
+    "overall_confidence": 0.54
+  }
+]

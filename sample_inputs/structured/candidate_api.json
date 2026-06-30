@@ -1,0 +1,85 @@
+{
+  "candidates": [
+    {
+      "full_name": "Jane M. Doe",
+      "email": ["jane.doe@email.com", "jane@techcorp.com"],
+      "phones": ["+1 (415) 555-2671"],
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "country": "US"
+      },
+      "links": {
+        "linkedin": "https://linkedin.com/in/janedoe"
+      },
+      "headline": "Senior Machine Learning Engineer",
+      "years_experience": 7,
+      "skills": [
+        {"name": "Python"},
+        {"name": "Machine Learning"},
+        {"name": "TensorFlow"},
+        {"name": "Docker"},
+        {"name": "SQL"}
+      ],
+      "experience": [
+        {
+          "company": "TechCorp",
+          "title": "Senior ML Engineer",
+          "start": "2020-01",
+          "end": null,
+          "summary": "Leading ML platform development, model training pipelines, and feature store infrastructure."
+        },
+        {
+          "company": "TechCorp",
+          "title": "ML Engineer",
+          "start": "2018-06",
+          "end": "2019-12",
+          "summary": "Built recommendation models and real-time inference services."
+        }
+      ],
+      "education": [
+        {
+          "institution": "Stanford University",
+          "degree": "MS",
+          "field": "Computer Science",
+          "end_year": 2018
+        }
+      ]
+    },
+    {
+      "full_name": "John Smith",
+      "email": "john.smith@example.com",
+      "phones": ["+44 20 7946 0958"],
+      "location": {
+        "city": "London",
+        "country": "UK"
+      },
+      "headline": "Full Stack Developer",
+      "years_experience": 4,
+      "skills": [
+        {"name": "JavaScript"},
+        {"name": "React"},
+        {"name": "Node.js"},
+        {"name": "PostgreSQL"},
+        {"name": "AWS"}
+      ],
+      "experience": [
+        {
+          "company": "WebCo Ltd",
+          "title": "Full Stack Developer",
+          "start": "2021-03",
+          "end": null,
+          "summary": "Building scalable web applications with React and Node.js."
+        }
+      ],
+      "education": [
+        {
+          "institution": "Imperial College London",
+          "degree": "BSc",
+          "field": "Computing",
+          "end_year": 2020
+        }
+      ]
+    }
+  ]
+}
