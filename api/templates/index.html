@@ -61,13 +61,13 @@
         </div>
 
         <div class="sample-loader-container" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-shrink: 0; flex-wrap: wrap;">
-            <select id="sampleSelect" class="modal-input" style="width: auto; min-width: 300px; margin-bottom: 0;">
+            <select id="sampleSelect" class="modal-input" style="width: auto; min-width: 300px; margin-bottom: 0;" aria-label="Select a sample file">
                 <option value="">-- Or select a provided sample file --</option>
             </select>
-            <button class="btn-outline" style="padding: 0.875rem 1.5rem; margin-bottom: 0;" onclick="loadSampleFile()">Load Sample</button>
+            <button class="btn-outline" style="padding: 0.875rem 1.5rem; margin-bottom: 0;" onclick="loadSampleFile()" aria-label="Load selected sample">Load Sample</button>
         </div>
 
-        <section class="upload-card" id="dropzone" tabindex="0" role="button" aria-label="Upload candidate files via Drag & Drop or Click" onclick="document.getElementById('fileInput').click()" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('fileInput').click(); }">
+        <section class="upload-card" id="dropzone" tabindex="0" role="button" aria-label="Upload candidate files via Drag & Drop or Click">
             <div class="upload-icon" aria-hidden="true">✨</div>
             <h3 class="upload-text">Drag & Drop or Click to Upload</h3>
             <p class="upload-subtext">Supports .json, .csv, .txt, .pdf, and .docx</p>
@@ -75,24 +75,32 @@
             <input type="file" id="fileInput" multiple accept=".json,.csv,.txt,.pdf,.docx" aria-hidden="true" tabindex="-1">
             
             <!-- Stop propagation so interacting with lists/buttons doesn't trigger upload -->
-            <div class="file-list" id="fileList" onclick="event.stopPropagation()"></div>
+            <div class="file-list" id="fileList"></div>
             
             <button class="btn" id="processBtn" style="display: none; margin-top: 2rem; width: 100%; max-width: 600px;" onclick="event.stopPropagation(); processFiles()" aria-label="Run Transformation Pipeline">
                 🚀 Run Transformation Pipeline
             </button>
-
-            <div class="error-message" id="errorMessage" aria-live="polite"></div>
         </section>
+
+        <!-- Contextual Error Banner -->
+        <div class="error-banner" id="errorBanner" aria-live="assertive" role="alert">
+            <div class="error-icon">⚠️</div>
+            <div class="error-content">
+                <h4 id="errorTitle">Upload Failed</h4>
+                <p id="errorMessage"></p>
+            </div>
+            <button class="error-close" onclick="closeError()" aria-label="Dismiss error">✖</button>
+        </div>
 
         <div class="loading-container" id="loadingContainer">
             <div class="spinner"></div>
             <p style="color: var(--text-muted); font-size: 1.1rem; text-align: center;">Aggregating sources, normalizing data, and resolving conflicts...</p>
         </div>
 
-        <div class="results-container" id="resultsContainer">
+        <div class="results-container" id="resultsContainer" role="region" aria-label="Extracted Profiles">
             <div class="section-header">
                 <h2>Generated Canonical Profiles</h2>
-                <button class="btn-outline" onclick="resetPipeline()">Process New Batch</button>
+                <button class="btn-outline" onclick="resetPipeline()" aria-label="Process a new batch of files">Process New Batch</button>
             </div>
             
             <div class="profile-grid" id="profileGrid">

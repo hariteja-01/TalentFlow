@@ -22,10 +22,17 @@ const processBtn = document.getElementById('processBtn');
 const loadingContainer = document.getElementById('loadingContainer');
 const resultsContainer = document.getElementById('resultsContainer');
 const profileGrid = document.getElementById('profileGrid');
+const errorBanner = document.getElementById('errorBanner');
+const errorTitle = document.getElementById('errorTitle');
 const errorMessage = document.getElementById('errorMessage');
 const sidebar = document.getElementById('sidebar');
 
 let selectedFiles = [];
+
+// Close error banner
+function closeError() {
+    errorBanner.style.display = 'none';
+}
 
 // --- User Identity Management ---
 function initUser() {
@@ -135,6 +142,20 @@ if (dropzone) {
         dropzone.classList.remove('dragover');
         handleFiles(e.dataTransfer.files);
     });
+    
+    // Proper click and keydown handlers avoiding event bubbling loops
+    dropzone.addEventListener('click', (e) => {
+        if (e.target !== fileInput && e.target !== fileList && !fileList.contains(e.target)) {
+            fileInput.click();
+        }
+    });
+
+    dropzone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInput.click();
+        }
+    });
 }
 
 if (fileInput) {
@@ -144,10 +165,17 @@ if (fileInput) {
 }
 
 function handleFiles(files) {
-    // Append to existing instead of replacing if multiple drops
+    if (!files || files.length === 0) return;
+    
     const newFiles = Array.from(files);
     selectedFiles = [...selectedFiles, ...newFiles];
     updateFileList();
+    
+    // Clear input so same file can be uploaded again
+    if (fileInput) {
+        fileInput.value = '';
+    }
+
     if (selectedFiles.length > 0) {
         processBtn.style.display = 'none'; // Auto process, so we hide the button
         processFiles(); // Instantly process!
@@ -192,7 +220,7 @@ function resetPipeline() {
 async function processFiles() {
     if (selectedFiles.length === 0) return;
 
-    errorMessage.style.display = 'none';
+    closeError();
     resultsContainer.style.display = 'none';
     dropzone.style.display = 'none';
     loadingContainer.style.display = 'flex';
@@ -222,8 +250,15 @@ async function processFiles() {
     } catch (error) {
         loadingContainer.style.display = 'none';
         dropzone.style.display = 'flex';
-        errorMessage.textContent = 'Error: ' + error.message;
-        errorMessage.style.display = 'block';
+        
+        let msg = error.message;
+        if (msg.includes('Failed to fetch')) {
+            msg = 'Server disconnected. Please ensure the API is running.';
+        }
+        
+        errorTitle.textContent = 'Processing Failed';
+        errorMessage.textContent = msg;
+        errorBanner.style.display = 'flex';
     }
 }
 
@@ -266,25 +301,35 @@ function renderProfiles(profiles) {
             </div>
             
             <div class="info-grid">
-                <span class="info-icon">📧</span>
-                <span>${emailStr}</span>
-                
-                <span class="info-icon">📱</span>
-                <span>${phoneStr}</span>
-
-                <span class="info-icon">📍</span>
-                <span>${location}</span>
+                <div class="info-item">
+                    <span class="info-icon">📧</span>
+                    <span class="info-text">${emailStr}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📱</span>
+                    <span class="info-text">${phoneStr}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📍</span>
+                    <span class="info-text">${location}</span>
+                </div>
             </div>
 
-            <div>
-                <div style="font-size:0.85rem; margin-bottom:0.5rem; color:var(--text-muted); font-weight: 600; letter-spacing: 0.5px;">TOP SKILLS</div>
+            <div class="skills-section">
+                <div class="section-label">TOP SKILLS</div>
                 <div class="skills-container">${skillsHtml}</div>
             </div>
 
             <div class="card-actions">
-                <button class="btn-outline" onclick="toggleRawData(${idx})">Inspect JSON</button>
+                <button class="btn-outline btn-sm" onclick="toggleRawData(${idx})" aria-expanded="false">View JSON Profile</button>
             </div>
-            <pre class="raw-json" id="raw-json-${idx}">${escapeHtml(JSON.stringify(profile, null, 2))}</pre>
+            <div class="raw-json-container" id="raw-json-${idx}">
+                <div class="json-header">
+                    <span>canonical_profile.json</span>
+                    <button class="copy-btn" onclick="copyJson(${idx})" title="Copy to clipboard">📋 Copy</button>
+                </div>
+                <pre class="raw-json">${escapeHtml(JSON.stringify(profile, null, 2))}</pre>
+            </div>
         `;
         
         profileGrid.appendChild(card);
@@ -292,15 +337,31 @@ function renderProfiles(profiles) {
 }
 
 function toggleRawData(idx) {
-    const rawJson = document.getElementById(`raw-json-${idx}`);
-    const btn = rawJson.previousElementSibling.querySelector('button');
-    if (rawJson.style.display === 'block') {
-        rawJson.style.display = 'none';
-        btn.textContent = 'Inspect JSON';
+    const container = document.getElementById(`raw-json-${idx}`);
+    const btn = container.previousElementSibling.querySelector('button');
+    
+    if (container.classList.contains('active')) {
+        container.classList.remove('active');
+        btn.textContent = 'View JSON Profile';
+        btn.setAttribute('aria-expanded', 'false');
     } else {
-        rawJson.style.display = 'block';
-        btn.textContent = 'Hide JSON';
+        container.classList.add('active');
+        btn.textContent = 'Hide JSON Profile';
+        btn.setAttribute('aria-expanded', 'true');
     }
+}
+
+function copyJson(idx) {
+    const container = document.getElementById(`raw-json-${idx}`);
+    const pre = container.querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent).then(() => {
+        const btn = container.querySelector('.copy-btn');
+        const origText = btn.textContent;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = origText, 2000);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+    });
 }
 
 // Initialize
