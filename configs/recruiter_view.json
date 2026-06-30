@@ -1,0 +1,13 @@
+{
+  "fields": [
+    { "path": "Candidate Name", "from": "full_name", "type": "string" },
+    { "path": "Contact Number", "from": "phones[0]", "type": "string", "normalize": "E164" },
+    { "path": "Email Address", "from": "emails[0]", "type": "string" },
+    { "path": "Location", "from": "location.city", "type": "string" },
+    { "path": "Current Headline", "from": "headline", "type": "string" },
+    { "path": "Links", "from": "links", "type": "object" }
+  ],
+  "include_confidence": true,
+  "include_provenance": false,
+  "on_missing": "null"
+}

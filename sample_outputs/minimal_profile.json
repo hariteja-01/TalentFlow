@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Hari Teja Patnala",
+    "email": "patnalahariteja@gmail.com",
+    "top_skills": [
+      "C++",
+      "Python",
+      "JavaScript",
+      "SQL",
+      "Git",
+      "GitHub",
+      "Linux",
+      "PowerBI",
+      "Tableau",
+      "Vercel",
+      "Render",
+      "Data Structures & Algorithms",
+      "Object-Oriented Programming",
+      "Operating Systems",
+      "Dbms",
+      "Computer Networks"
+    ]
+  },
+  {
+    "name": "Jane M. Doe",
+    "email": "jane.doe@email.com",
+    "top_skills": [
+      "Python",
+      "Machine Learning",
+      "TensorFlow",
+      "Docker",
+      "SQL",
+      "Kubernetes",
+      "AWS",
+      "Deep Learning",
+      "PyTorch",
+      "Apache Spark",
+      "Data Engineering",
+      "REST APIs",
+      "Git",
+      "CI/CD",
+      "Linux"
+    ]
+  },
+  {
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "top_skills": [
+      "JavaScript",
+      "React",
+      "Node.js",
+      "PostgreSQL",
+      "AWS",
+      "Docker"
+    ]
+  },
+  {
+    "name": "Alex Rivera",
+    "email": "alex.rivera@techmail.com",
+    "top_skills": [
+      "Python",
+      "Apache Spark",
+      "Apache Kafka",
+      "SQL",
+      "AWS",
+      "Docker",
+      "Terraform"
+    ]
+  },
+  {
+    "name": "Torvalds"
+  },
+  {
+    "name": "Octocat"
+  }
+]

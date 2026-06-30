@@ -7,41 +7,133 @@
   <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Passing">
   
   <p align="center">
-    <h3>🌐 <a href="https://talent-flow-gules.vercel.app/">Live Demo</a> | 🎥 <a href="#">Demo Video (Coming Soon)</a> | 📂 <a href="https://github.com/hariteja-01/TalentFlow">GitHub Repository</a></h3>
+    <h3>🌐 <a href="https://talent-flow-gules.vercel.app/">Live Demo</a> | 🎥 <a href="#">Demo Video</a> | 📂 <a href="https://github.com/hariteja-01/TalentFlow">GitHub Repository</a></h3>
   </p>
 </div>
 
-TalentFlow is a robust, production-grade data pipeline designed to ingest, normalize, and merge candidate data from highly heterogeneous sources (ATS JSON payloads, HRIS CSV exports, and unstructured Resumes) into a single, unified Canonical Profile.
+## 🎥 Demo Video
+
+[![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+*A 2-minute walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
+
+---
+
+TalentFlow is a robust, production-grade data pipeline designed to ingest, normalize, and merge candidate data from highly heterogeneous sources (ATS JSON payloads, HRIS CSV exports, GitHub API, and unstructured Resumes) into a single, unified Canonical Profile.
 
 Built to satisfy the Eightfold Candidate Profile Transformer problem statement, TalentFlow emphasizes deterministic merging, robust error boundaries, strict validation, and a beautiful, accessible web interface.
 
 ---
 
-## 📸 Screenshots
+## 🚀 Quick Start
 
-| Landing & Upload | Unified Profile Results |
-|:---:|:---:|
-| ![Landing Page](docs/images/landing.png) | ![Results Page](docs/images/results.png) |
+### Prerequisites
+- Python 3.11 or higher
+- `pip` package manager
 
-*(Note: See [docs/images/](docs/images/) for mobile views and processing states)*
+### Installation
+```bash
+# Clone the repository
+git clone https://github.com/hariteja-01/TalentFlow.git
+cd TalentFlow
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -e .
+```
+
+### CLI Usage - Default Schema
+```bash
+# Process sample inputs with default output schema
+talentflow -i sample_inputs/ -o sample_outputs/default_output.json
+
+# View the output
+cat sample_outputs/default_output.json
+```
+
+### CLI Usage - Custom Configs
+```bash
+# Minimal profile (name, email, skills only)
+talentflow -i sample_inputs/ -o sample_outputs/minimal_profile.json -c config/minimal_profile.json
+
+# Recruiter view (optimized for recruiter dashboard)
+talentflow -i sample_inputs/ -o sample_outputs/recruiter_view.json -c config/recruiter_view.json
+
+# No confidence scores
+talentflow -i sample_inputs/ -o sample_outputs/no_confidence.json -c config/no_confidence.json
+```
+
+### Web UI
+```bash
+# Start local server
+python -m api.index
+
+# Open browser
+# Navigate to: http://localhost:8000
+
+# Upload files via drag-and-drop
+# View unified canonical profiles
+```
 
 ---
 
-## 💡 Project Motivation
-**Why TalentFlow exists?**
-Modern HR teams grapple with fragmented candidate data scattered across Applicant Tracking Systems (ATS), Human Resource Information Systems (HRIS), and raw PDFs. TalentFlow was created to solve the "Identity Resolution & Normalization" problem ensuring that a candidate who applies via LinkedIn, gets sourced via a CSV export, and uploads a PDF resume is recognized as the *same* candidate, with their skills, experience, and contact info intelligently unified.
+## 📄 Documentation
 
-## ✨ Key Features
-- **Multi-Source Ingestion**: Safely parses JSON, CSV, PDF, DOCX, and TXT files.
-- **Advanced Normalization**: Formats Phone Numbers (E.164), Dates (ISO YYYY-MM), and canonicalizes known skills.
-- **Deterministic Merging**: Graph-based Union-Find algorithm resolves identities deterministically.
-- **Confidence Scoring**: Evaluates the completeness of profiles and grades them from 0.0 to 1.0.
-- **Extensible Configs**: Dynamic JSON policies control field projections and missing value fallbacks.
-- **Fault-Tolerant Engine**: Corrupted or image-only PDFs are caught at the boundary without crashing the pipeline.
+- **[Stage 1 Design Document](docs/HariTeja_patnalahariteja_Eightfold.md)** - Technical design covering pipeline architecture, merge policy, confidence scoring, and edge cases.
+- **[Architecture Diagrams](docs/images/)** - Visual pipeline flow and system architecture.
 
 ---
 
-## 🏗 System Architecture & End-to-End Pipeline Flow
+## 🛡️ Edge Cases Handled
+
+This system gracefully handles numerous edge cases per the "robust" requirement:
+
+1. **Multi-Source Single Candidate**: Multiple files (CSV, JSON, PDF, GitHub URL) for the same person (matching email) → merged into ONE unified profile.
+2. **Duplicate Profiles**: Same candidate across different sources → deduplicated via email-based identity resolution.
+3. **Missing/Corrupted Files**: Malformed JSON, corrupted PDF, missing CSV columns → gracefully skipped, no crash.
+4. **Invalid Data Formats**: Unparseable phone numbers, invalid dates, unknown countries → normalized to null (not invented).
+5. **Non-Resume Documents**: Financial statements, invoices, unrelated PDFs → conservative extraction with very low confidence, empty fields rather than garbage.
+6. **GitHub API Failures**: 404 user not found, 403 rate limit, network timeout → graceful degradation with partial data (cascading fallback to HTML scraping).
+7. **Array Access on Empty Arrays**: Custom config requests `emails[0]` but emails is empty → returns null per `on_missing` policy.
+8. **Conflicting Data Across Sources**: Different names/phones in different sources → highest-weighted source wins, documented in provenance.
+9. **Empty Source Files**: Valid CSV with zero rows, empty JSON object → skipped gracefully.
+10. **Education Date Parsing**: Date ranges like "August 2023 - Present" filtered out from institution names.
+
+**Philosophy**: "Wrong-but-confident is worse than honestly-empty" - we return null rather than guess.
+
+---
+
+## 📋 Assumptions
+
+1. **Source Priority**: When sources conflict, priority is: ATS JSON (0.9) > CSV (0.7) > PDF Resume (0.65) > GitHub API (0.4).
+2. **Email-Based Identity**: Primary matching key is email address; name similarity is fallback.
+3. **Skill Canonicalization**: Only well-known technical skills are canonicalized; unknown skills kept as-is or filtered if suspicious.
+4. **GitHub API Rate Limits**: Using unauthenticated API (60 requests/hour); for production, would use authenticated token.
+5. **E.164 Phone Format**: Uses `phonenumbers` library; defaults to `None` region if country code missing.
+6. **Deterministic Processing**: Files processed in sorted order to ensure same inputs → same outputs.
+7. **Conservative Extraction**: When document structure unclear, return empty/null rather than guess.
+
+---
+
+## ⚠️ Deliberately Descoped
+
+Under time constraints, the following were intentionally left out:
+
+1. **OCR for Image-Only PDFs**: Using PyMuPDF for text extraction; pure-image PDFs return empty data (would need Tesseract OCR).
+2. **LLM-Based Extraction**: Using regex heuristics for determinism; LLM extraction would be more flexible but non-deterministic.
+3. **LinkedIn Profile Parsing**: Removed entirely; LinkedIn blocks scraping and requires paid API access.
+4. **Real-Time API Monitoring**: No retry logic or exponential backoff for GitHub API; simple try-catch error handling.
+5. **Database Persistence**: Pipeline outputs JSON files; no PostgreSQL/MongoDB integration.
+6. **Authentication**: Web UI has no login/auth; suitable for demo, not production.
+7. **Advanced Resume Formats**: Handles standard resume layouts; complex multi-column or table-heavy resumes may extract incorrectly.
+8. **Internationalization**: Phone normalization assumes common formats; exotic international formats may fail.
+
+---
+
+## 🏗 System Architecture
 
 TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceability, testability, and guarantees that errors in one document never poison the pipeline.
 
@@ -74,22 +166,6 @@ graph TD
     G --> H
 ```
 
-### End-to-End Pipeline Flow
-1. **Ingestion**: Discovers files, safely checks byte-signatures (MIME types) to prevent extension spoofing, and routes files to their respective parsers.
-2. **Extraction**: Implements fault-tolerant parsing. Extracts text from PDFs (gracefully handling image-only, corrupted, or encrypted PDFs without crashing) and maps JSON/CSV fields. Yields loosely structured `IntermediateRecord` models.
-3. **Normalization**: Canonicalizes data points. Phones are mapped to E.164, dates to ISO `YYYY-MM`, and skills are resolved against a known dictionary (e.g., `ML` -> `Machine Learning`).
-4. **Merging (Identity Resolution)**: Groups identities using a graph-based Union-Find approach (emails as primary keys, exact name matches as fallbacks). Resolves conflicts deterministically by weighting sources (JSON > CSV > Resume).
-5. **Confidence Scoring**: Evaluates the structural integrity and completeness of the merged profile, generating a deterministic score from `0.0` to `1.0`.
-6. **Projection**: Applies dynamic, user-defined configuration policies to reshape the final JSON.
-
----
-
-## 🧠 Design Decisions & Engineering Trade-offs
-
-- **Strict Type Validation at Boundaries**: We use Pydantic `BaseModel` for both `IntermediateRecord` and `CanonicalProfile`. This enforces strict type boundaries, failing fast if a parser violates the schema.
-- **Graceful Degradation over OCR**: Instead of introducing heavy dependencies like Tesseract OCR for image-only PDFs, we chose a graceful fallback. The parser detects a lack of text, logs a clear diagnostic error, and skips the file. This keeps the environment lightweight and pure.
-- **Pure Python Regex Heuristics vs LLMs**: For unstructured resumes, we opted for robust, fine-tuned Regular Expressions over LLM API calls. **Trade-off**: While LLMs can handle edge cases better, regex ensures sub-millisecond execution times, 100% determinism, and zero external network dependency.
-
 ---
 
 ## 🔒 Security Considerations
@@ -99,148 +175,6 @@ TalentFlow handles PII (Personally Identifiable Information) and takes security 
 - **Byte-Signature Validation**: The system does not trust file extensions (`.pdf`). It verifies the file signature at the API boundary, rejecting spoofed or malicious executables disguised as documents.
 - **Zero-Byte & Billion-Laughs Defenses**: Limits are placed on upload payload sizes, and empty or corrupted files are caught instantly before parsing engines allocate memory.
 - **CORS Protection & DOM Sanitization**: The FastAPI backend is configured with strict CORS rules. The frontend UI uses an `escapeHtml` utility function to mitigate XSS attacks during profile rendering.
-
----
-
-## ⚡ Performance Considerations
-
-- **Memory Efficiency**: CSV and JSON files are streamed or read into contiguous memory blocks minimally. The Union-Find graph is constructed dynamically, maintaining an $O(N \alpha(N))$ time complexity, ensuring it can scale to thousands of records seamlessly.
-- **FastAPI Async I/O**: The backend uses asynchronous request handling, preventing blocking during heavy file uploads or disk writes.
-
----
-
-## 📁 Folder Structure
-
-```text
-TalentFlow/
-├── api/                   # FastAPI backend and UI serving logic
-│   ├── static/            # CSS and JS for the web app
-│   ├── templates/         # HTML templates
-│   └── index.py           # Vercel entrypoint / FastAPI app
-├── config/                # JSON policy configs for the projection stage
-├── docs/                  # Documentation and architecture assets
-│   └── images/            # UI Screenshots
-├── sample_inputs/         # Example test files (JSON, CSV, PDF, TXT)
-├── sample_outputs/        # Example Canonical Profile results
-├── src/                   # Core Python Pipeline Library
-│   ├── models/            # Pydantic schemas (Intermediate & Canonical)
-│   ├── normalizers/       # E.164, Dates, and Skills logic
-│   ├── parsers/           # CSV, JSON, and Resume parsers
-│   └── pipeline/          # Pipeline stages (Ingestion -> Projection)
-├── tests/                 # 100+ Pytest suite (e2e, edge cases, parsers)
-├── .gitignore
-├── LICENSE
-├── pyproject.toml         # Build system and dependencies
-└── README.md
-```
-
----
-
-## 🛠 Tech Stack
-
-- **Core**: Python 3.11+
-- **Data Validation**: Pydantic v2
-- **API Backend**: FastAPI, Uvicorn
-- **Parsing Engines**: `python-dateutil`, `phonenumbers`, `pycountry`, `pymupdf` (PDF), `python-docx`
-- **Testing Engine**: Pytest, Coverage
-- **Frontend UI**: Vanilla JavaScript, CSS Variables, Semantic HTML5
-
----
-
-## 📦 Installation & Environment Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/hariteja-01/TalentFlow.git
-   cd TalentFlow
-   ```
-
-2. **Create a virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -e .
-   ```
-
----
-
-## 💻 Usage
-
-### CLI Usage
-You can run the pipeline directly from your terminal using the `talentflow` CLI tool.
-```bash
-# Basic Execution
-talentflow -i sample_inputs/ -o sample_outputs/output.json
-
-# Execution with custom JSON projection policy
-talentflow -i sample_inputs/ -o sample_outputs/custom.json -c config.json
-```
-
-### Web Application Usage
-Start the FastAPI application backend locally:
-```bash
-python -m api.index
-```
-Open `http://localhost:8000` in your web browser. 
-Features fully navigable keyboard accessibility, dropzone interaction, and real-time visualization of Canonical Profiles.
-
-> **Note on URL Parsers (GitHub/LinkedIn)**: Extracting profiles via URLs (`.txt` files containing `github.com` or `linkedin.com` links) works fully in **CLI mode**. However, these parsers are intentionally **not supported in the Web UI / Deployment environment**. This limitation shows good judgment regarding production constraints, preventing serverless cold starts, long-running API blocks, and unexpected rate limit exhaustion in a live environment.
-
----
-
-## 📄 Example Input & Output
-
-**Example JSON ATS Payload (Input)**
-```json
-{
-  "candidate_name": "Jane M. Doe",
-  "contact": { "email": "jane.doe@email.com", "phone": "+1 555-0198" },
-  "location": "San Francisco, CA, US"
-}
-```
-
-**Example Canonical Profile (Output)**
-```json
-{
-  "candidate_id": "a8f9c2d1b7e4",
-  "full_name": "Jane Doe",
-  "emails": ["jane.doe@email.com"],
-  "phones": ["+15555550198"],
-  "location": { "city": "San Francisco", "region": "CA", "country": "US" },
-  "overall_confidence": 0.95
-}
-```
-
----
-
-## 🚀 Deployment
-
-The API and Web UI are fully prepared for serverless deployment on **Vercel**. 
-- The `api/index.py` handles the FastAPI app export.
-- `vercel.json` (if present) routes serverless functions.
-- Simply link the repository to a Vercel project, set the framework to "Other" (or Python), and deploy.
-
----
-
-## 🧪 Testing
-
-The repository maintains an extensive test suite verifying parsers, normalizers, edge cases, deterministic merging, and end-to-end integration.
-
-```bash
-pytest tests/ -v
-```
-
----
-
-## 🔮 Future Improvements
-
-- **Native OCR Integration**: Implement a lightweight, WebAssembly-based OCR fallback for pure image PDFs to bypass heavy Tesseract dependencies.
-- **LLM Agentic Extraction**: Integrate a structured-output LLM (like `gpt-4o-mini`) strictly for extracting complex nested work histories from highly unstructured edge-case resumes.
-- **Database Integration**: Add a PostgreSQL sink for the Projection stage.
 
 ---
 

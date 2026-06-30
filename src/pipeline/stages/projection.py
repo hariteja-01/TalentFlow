@@ -82,6 +82,10 @@ def project_profile(
     # Optionally include confidence
     if config.include_confidence:
         output["overall_confidence"] = profile.overall_confidence
+        
+    # Strip provenance if requested
+    if not config.include_provenance:
+        output.pop("provenance", None)
 
     return output
 

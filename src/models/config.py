@@ -42,6 +42,7 @@ class OutputConfig(BaseModel):
 
     fields: list[FieldConfig] = Field(default_factory=list)
     include_confidence: bool = True
+    include_provenance: bool = True
     on_missing: str = "null"
 
     @field_validator("on_missing")

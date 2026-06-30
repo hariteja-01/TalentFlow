@@ -1,0 +1,14 @@
+{
+  "fields": [
+    { "path": "candidate_id", "from": "candidate_id", "type": "string" },
+    { "path": "full_name", "from": "full_name", "type": "string" },
+    { "path": "emails", "from": "emails", "type": "string[]" },
+    { "path": "phones", "from": "phones", "type": "string[]" },
+    { "path": "skills", "from": "skills", "type": "object" },
+    { "path": "experience", "from": "experience", "type": "object" },
+    { "path": "education", "from": "education", "type": "object" }
+  ],
+  "include_confidence": false,
+  "include_provenance": false,
+  "on_missing": "omit"
+}

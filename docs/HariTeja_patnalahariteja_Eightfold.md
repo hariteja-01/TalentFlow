@@ -1,105 +1,48 @@
-# Candidate Profile Transformer — Design Document
-
-**Hari Teja Patnala** · patnalahariteja@gmail.com
-
----
+# TalentFlow: Multi-Source Candidate Data Transformer
+**Candidate:** Hari Teja | **Email:** patnalahariteja@gmail.com
 
 ## 1. Pipeline Architecture
-
-```
-Source Files → Ingest → Extract → Normalize → Merge → Score → Project → Validate → Output JSON
-```
-
-Each stage is a pure function with typed inputs/outputs; errors are caught at stage boundaries and logged—never propagated.
-
-| Stage | Responsibility | Error Boundary |
-|---|---|---|
-| **Ingest** | Detect format (CSV, JSON, PDF/DOCX/TXT, GitHub URL), route to parser | Corrupted file → skip + warn |
-| **Extract** | Parse into `IntermediateRecord` (one per source) | Missing fields → `null` |
-| **Normalize** | Phone → E.164, dates → YYYY-MM, country → ISO-3166, skills → canonical | Invalid value → `null` |
-| **Merge** | Union-Find on identity keys → fused `CanonicalProfile` | Conflicts → source-weight resolution |
-| **Score** | Compute per-field and overall confidence | — |
-| **Project** | Apply output config to select/reshape fields | Missing path → `on_missing` policy |
-| **Validate** | Assert output against config schema | Schema violation → raise |
-
-**Parsers:** CSV and ATS JSON (structured; field-mapping layer for non-canonical ATS schemas) · Resume PDF/DOCX/TXT (unstructured; regex + heuristic section extraction) · GitHub profile URLs (unstructured; API fetch for repos, languages, bio).
+The pipeline is designed as a modular, 6-stage DAG to ensure deterministic execution and clear separation of concerns:
+1. **Ingestion (`detect`)**: Scans input files and identifies the source type (CSV, JSON ATS, PDF Resume, GitHub URLs) by applying structural heuristics. Files are read in deterministic alphabetical order.
+2. **Extraction (`extract`)**: Source-specific parsers extract intermediate data. The `ResumeParser` heavily relies on regex and structural cues, prioritizing "honestly-empty over wrong-but-confident" by only extracting from designated sections.
+3. **Normalization (`normalize`)**: Cleans extracted data (e.g., standardizing phones to E.164, parsing dates to YYYY-MM, mapping countries to ISO-3166 alpha-2).
+4. **Identity & Merging (`merge`)**: Resolves candidate identity across sources. It uses a Union-Find algorithm based primarily on `emails`. When conflicts arise, data is merged field-by-field based on `source_weight`.
+5. **Confidence Scoring (`score`)**: Evaluates the completeness, source reliability, and agreement across sources to emit granular confidence metrics.
+6. **Projection (`validate & project`)**: Morphs the internal canonical record into a runtime-configurable JSON shape, handling missing values and omitting fields per user configuration.
 
 ## 2. Canonical Schema & Normalizations
+The internal canonical schema provides a strict, typed structure (`pydantic.BaseModel`):
+- `candidate_id` (UUID), `full_name` (String), `emails` (String Array)
+- `phones` (String Array): **Normalized** via the `phonenumbers` library to strictly formatted E.164. Invalid sequences drop out.
+- `location` (Object): `{city, region, country}`. **Normalized** by mapping country strings (e.g., "UK", "United States") to ISO-3166 alpha-2 ("GB", "US").
+- `links` (Object): `{linkedin, github, portfolio, other[]}`.
+- `experience`, `education` (Objects): Dates are **Normalized** into strict `YYYY-MM` formats using fuzzy parsing logic.
+- `skills` (Array): **Normalized** against a canonical dictionary (e.g., "js" → "JavaScript").
+- `provenance` (Array): Tracks `{field, source, method}` for every individual data point.
 
-| Field | Type | Notes |
-|---|---|---|
-| `candidate_id` | `str` | SHA-256 of sorted, lowercased emails |
-| `full_name` | `str` | — |
-| `emails` | `List[str]` | Deduplicated, lowercased |
-| `phones` | `List[str]` | E.164 format |
-| `location` | `{city, region, country}` | `country` = ISO-3166 alpha-2 |
-| `links` | `{linkedin, github, portfolio, other[]}` | — |
-| `headline` | `str \| null` | — |
-| `years_experience` | `float \| null` | — |
-| `skills` | `List[{name, confidence, sources[]}]` | Canonical name, per-skill confidence |
-| `experience` | `List[{company, title, start, end, summary}]` | Dates as `YYYY-MM`; `"Present"` → `null` |
-| `education` | `List[{institution, degree, field, end_year}]` | — |
-| `provenance` | `List[{field, source, method}]` | Full audit trail |
-| `overall_confidence` | `float` | Mean of field-level scores, 0.0–1.0 |
+## 3. Merge / Conflict-Resolution Policy & Confidence
+**Conflict Policy**: We rely on *Email-based Identity Resolution* followed by *Source Weighting*. 
+When aggregating data for a candidate, sources are ranked by trustworthiness (ATS JSON [0.9] > CSV [0.7] > PDF Resume [0.65] > GitHub [0.4]). If multiple sources provide a conflicting scalar value (e.g., `headline`), the value from the highest-weight source strictly wins. Array fields (like `skills` or `emails`) are unioned and deduplicated.
 
-**Normalization rules:** Phone → E.164 via `libphonenumber` (`"(415) 555-2671"` → `"+14155552671"`; invalid → `null`) · Dates → `YYYY-MM` via `dateutil` (`"June 2020"` → `"2020-06"`) · Country → ISO-3166 via `pycountry` (`"United States"` → `"US"`, `"UK"` → `"GB"`) · Skills → alias dict (~100 entries): `"ML"` → `"Machine Learning"`, `"react"` → `"React"`; unknown → Title Case.
+**Confidence Formula**: 
+`confidence(f) = source_weight × completeness × agreement_bonus`
+- **Completeness**: Drops to 0.0 if the field is omitted/null/empty array.
+- **Agreement Bonus**: 1.2x boost if ≥ 2 independent sources agree on the exact value (capped at 1.0).
+Overall confidence is the arithmetic mean of all field scores.
 
-## 3. Merge & Conflict Resolution Policy
+## 4. Runtime Configurable Output (Projection Layer)
+TalentFlow implements a robust Projection Layer to divorce the canonical state from output demands without code changes. A JSON runtime config can:
+- **Select / Rename**: Extract nested fields via JSON paths (`"from": "emails[0]"` → mapped to `"primary_email"`).
+- **Format Toggle**: Run per-field normalizations (e.g., `"normalize": "E164"`) or hide sections (`"include_provenance": false`).
+- **On-Missing Policy**: If a required field is empty, the pipeline respects the `"on_missing"` key, behaving gracefully (`"null"` sets it to null, `"omit"` removes the key, `"error"` throws an exception).
 
-**Identity resolution — Union-Find:**  
-*Primary key:* email overlap (any shared email → same person, applied transitively).  
-*Secondary key:* exact name match (case-insensitive). Two records sharing either key are unioned into one cluster.
+## 5. Edge Cases Handled & Deliberate Scope Cuts
+### Edge Cases Successfully Handled:
+1. **Garbage Data / Financial Statements**: The Resume Parser utilizes structural guardrails (headers like "Technical Skills:") and strict pattern validation (preventing "6th Floor" from being tagged as a skill). If unsure, it returns `[]` (Honestly-empty).
+2. **Missing / Unparseable Sources**: Encrypted PDFs, syntax-error JSONs, or zero-row CSVs degrade gracefully and log warnings without crashing the pipeline.
+3. **GitHub API Constraints**: Extracts languages and bios optimally but implements cascading fallback (API -> HTML Scraping -> Heuristics) if Rate Limit (HTTP 403) is breached.
 
-**Source priority weights:** JSON `0.9` > CSV `0.7` > Resume `0.6` > GitHub `0.4`
-
-| Conflict type | Resolution |
-|---|---|
-| Scalar (`name`, `headline`) | Highest source weight wins |
-| List (`emails`, `phones`) | Union all, deduplicate |
-| Skills | Union; track confirming sources per skill |
-| Experience / Education | Collect all; deduplicate by `(company, title)` or `(institution, degree)` |
-
-**Example:** JSON `name="Jane M. Doe"` (0.9) vs. CSV `"Jane Doe"` (0.7) → JSON wins.
-
-**Determinism:** Records sorted by `(source_weight desc, source_name desc)` before merge. `candidate_id` = SHA-256 of sorted, lowercased emails. Identical inputs always produce identical output.
-
-**Confidence scoring:**  
-Per-field: `source_weight × completeness × agreement_bonus` (agreement_bonus = `1.2×` if ≥2 sources agree).  
-Per-skill: `base 0.5 + 0.15` per confirming source (capped at 1.0).  
-Overall: mean of all field-level scores.
-
-**Provenance:** Every retained value carries `{field, source, method}` — full traceability of where data came from and which rule selected it.
-
-## 4. Runtime Configurable Output
-
-The pipeline builds a full `CanonicalProfile` first, then applies a **projection config** (JSON) as the final stage — no code changes needed for new output shapes.
-
-```json
-{
-  "fields": [{"path": "primary_email", "from": "emails[0]", "type": "string"}],
-  "include_confidence": true,
-  "include_provenance": false,
-  "on_missing": "null"
-}
-```
-
-**`from` expressions:** array index (`emails[0]`), nested access (`location.country`), array spread (`skills[].name`).  
-**`on_missing` policies:** `"null"` (return null) · `"omit"` (exclude key) · `"error"` (raise exception).  
-Per-field normalization toggle available (`"normalize": "E164"` or `"canonical"`). Output validated against config schema post-projection.
-
-## 5. Edge Cases & Limitations
-
-**Handled:**
-- Corrupted / image-only PDF → detect zero extracted text, log diagnostic, skip, pipeline continues
-- ATS JSON with non-canonical fields → mapping layer resolves before extraction
-- GitHub API 403 (rate limit) / 404 (not found) → log warning, degrade gracefully
-- Conflicting emails across sources → union all, deduplicate, track in provenance
-- Skill aliases (`"react"` / `"React"` / `"ReactJS"` → `"React"`)
-- Empty CSV/JSON → skip with warning, never crash
-- Config requests `emails[0]` on empty array → returns `null`, not error
-
-**Deliberately omitted:**
-- **OCR** for image-only PDFs — heavyweight dependency; kept pipeline lightweight
-- **LLM-based extraction** — preferred determinism and zero-latency over marginal accuracy gains
-- **Real-time LinkedIn scraping** — blocked by LinkedIn ToS
-- **Database persistence** — pipeline is stateless and composable by design
+### Deliberately Descoped (Under Time Pressure):
+- **Image-only PDF OCR**: Current implementation parses text via PyMuPDF. Pure images return an empty record rather than utilizing heavy frameworks like Tesseract OCR.
+- **LLM Extraction**: Standardized on deterministic regexes rather than Generative AI to guarantee 100% determinism, execution speed, and absolute explainability on 10k+ candidates.
+- **LinkedIn Profile Scraping**: Deliberately bypassed live scraping logic as LinkedIn aggressively rate-limits/blocks unauthenticated bots.

@@ -8,19 +8,6 @@
     "phones": [
       "+919392329691"
     ],
-    "location": {
-      "city": "Phagwara",
-      "region": "Punjab",
-      "country": "IN"
-    },
-    "links": {
-      "linkedin": null,
-      "github": "github.com/hariteja-01",
-      "portfolio": "leetcode.com/u/hariteja01",
-      "other": []
-    },
-    "headline": null,
-    "years_experience": null,
     "skills": [
       {
         "name": "C++",
@@ -135,7 +122,6 @@
         ]
       }
     ],
-    "experience": [],
     "education": [
       {
         "institution": "- Minors: Data Science, Financial Markets",
@@ -161,65 +147,7 @@
         "field": null,
         "end_year": null
       }
-    ],
-    "provenance": [
-      {
-        "field": "full_name",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "location",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "links.github",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-first-found"
-      },
-      {
-        "field": "links.portfolio",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-first-found"
-      },
-      {
-        "field": "emails",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-union"
-      },
-      {
-        "field": "phones",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-union"
-      },
-      {
-        "field": "skills",
-        "source": "multiple",
-        "method": "merged-union-dedup"
-      },
-      {
-        "field": "education",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "12318279_Hari_Teja.txt",
-        "method": "merged-collected"
-      }
-    ],
-    "overall_confidence": 0.434
+    ]
   },
   {
     "candidate_id": "06d24a918a15",
@@ -232,19 +160,6 @@
     "phones": [
       "+14155552671"
     ],
-    "location": {
-      "city": "San Francisco",
-      "region": "California",
-      "country": "US"
-    },
-    "links": {
-      "linkedin": null,
-      "github": "github.com/janedoe",
-      "portfolio": null,
-      "other": []
-    },
-    "headline": "Senior Machine Learning Engineer",
-    "years_experience": 7.0,
     "skills": [
       {
         "name": "Python",
@@ -417,85 +332,7 @@
         "field": null,
         "end_year": 2016
       }
-    ],
-    "provenance": [
-      {
-        "field": "full_name",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "headline",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "years_experience",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "location",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "links.github",
-        "source": "resume_jane_doe.txt",
-        "method": "merged-first-found"
-      },
-      {
-        "field": "emails",
-        "source": "candidate_ats.json",
-        "method": "merged-union"
-      },
-      {
-        "field": "phones",
-        "source": "candidate_ats.json",
-        "method": "merged-union"
-      },
-      {
-        "field": "skills",
-        "source": "multiple",
-        "method": "merged-union-dedup"
-      },
-      {
-        "field": "experience",
-        "source": "candidate_ats.json",
-        "method": "merged-collected"
-      },
-      {
-        "field": "experience",
-        "source": "candidate_ats.json",
-        "method": "merged-collected"
-      },
-      {
-        "field": "experience",
-        "source": "candidates.csv",
-        "method": "merged-collected"
-      },
-      {
-        "field": "experience",
-        "source": "resume_jane_doe.txt",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "candidate_ats.json",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "resume_jane_doe.txt",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "resume_jane_doe.txt",
-        "method": "merged-collected"
-      }
-    ],
-    "overall_confidence": 0.85
+    ]
   },
   {
     "candidate_id": "8e621e3d0368",
@@ -506,14 +343,6 @@
     "phones": [
       "+442079460958"
     ],
-    "location": {
-      "city": "London",
-      "region": null,
-      "country": "GB"
-    },
-    "links": null,
-    "headline": "Full Stack Developer",
-    "years_experience": 4.0,
     "skills": [
       {
         "name": "JavaScript",
@@ -584,55 +413,7 @@
         "field": "Computing",
         "end_year": 2020
       }
-    ],
-    "provenance": [
-      {
-        "field": "full_name",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "headline",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "years_experience",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "location",
-        "source": "candidate_ats.json",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "emails",
-        "source": "candidate_ats.json",
-        "method": "merged-union"
-      },
-      {
-        "field": "phones",
-        "source": "candidate_ats.json",
-        "method": "merged-union"
-      },
-      {
-        "field": "skills",
-        "source": "multiple",
-        "method": "merged-union-dedup"
-      },
-      {
-        "field": "experience",
-        "source": "candidate_ats.json",
-        "method": "merged-collected"
-      },
-      {
-        "field": "education",
-        "source": "candidate_ats.json",
-        "method": "merged-collected"
-      }
-    ],
-    "overall_confidence": 0.77
+    ]
   },
   {
     "candidate_id": "7b86cf1cecfa",
@@ -643,14 +424,6 @@
     "phones": [
       "+16505558834"
     ],
-    "location": {
-      "city": "Austin",
-      "region": "Texas",
-      "country": "US"
-    },
-    "links": null,
-    "headline": "Data Engineer",
-    "years_experience": 5.0,
     "skills": [
       {
         "name": "Python",
@@ -710,112 +483,14 @@
         "end": null,
         "summary": null
       }
-    ],
-    "education": [],
-    "provenance": [
-      {
-        "field": "full_name",
-        "source": "candidates.csv",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "headline",
-        "source": "candidates.csv",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "years_experience",
-        "source": "candidates.csv",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "location",
-        "source": "candidates.csv",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "emails",
-        "source": "candidates.csv",
-        "method": "merged-union"
-      },
-      {
-        "field": "phones",
-        "source": "candidates.csv",
-        "method": "merged-union"
-      },
-      {
-        "field": "skills",
-        "source": "multiple",
-        "method": "merged-union-dedup"
-      },
-      {
-        "field": "experience",
-        "source": "candidates.csv",
-        "method": "merged-collected"
-      }
-    ],
-    "overall_confidence": 0.54
+    ]
   },
   {
     "candidate_id": "6d017ac29ee0",
-    "full_name": "Torvalds",
-    "emails": [],
-    "phones": [],
-    "location": null,
-    "links": {
-      "linkedin": null,
-      "github": "https://github.com/torvalds",
-      "portfolio": null,
-      "other": []
-    },
-    "headline": null,
-    "years_experience": null,
-    "skills": [],
-    "experience": [],
-    "education": [],
-    "provenance": [
-      {
-        "field": "full_name",
-        "source": "github_profiles.txt",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "links.github",
-        "source": "github_profiles.txt",
-        "method": "merged-first-found"
-      }
-    ],
-    "overall_confidence": 0.12
+    "full_name": "Torvalds"
   },
   {
     "candidate_id": "a6658157f0df",
-    "full_name": "Octocat",
-    "emails": [],
-    "phones": [],
-    "location": null,
-    "links": {
-      "linkedin": null,
-      "github": "https://github.com/octocat",
-      "portfolio": null,
-      "other": []
-    },
-    "headline": null,
-    "years_experience": null,
-    "skills": [],
-    "experience": [],
-    "education": [],
-    "provenance": [
-      {
-        "field": "full_name",
-        "source": "github_profiles.txt",
-        "method": "merged-highest-weight"
-      },
-      {
-        "field": "links.github",
-        "source": "github_profiles.txt",
-        "method": "merged-first-found"
-      }
-    ],
-    "overall_confidence": 0.12
+    "full_name": "Octocat"
   }
 ]
