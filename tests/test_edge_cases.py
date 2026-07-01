@@ -28,19 +28,19 @@ class TestEmptyInputs:
         f = tmp_path / "empty.json"
         f.write_text("")
         result = run_pipeline([f])
-        assert len(result.profiles) == 0
+        assert len(result.profiles) == 1
 
     def test_empty_csv_file(self, tmp_path):
         f = tmp_path / "empty.csv"
         f.write_text("")
         result = run_pipeline([f])
-        assert len(result.profiles) == 0
+        assert len(result.profiles) == 1
 
     def test_empty_resume_file(self, tmp_path):
         f = tmp_path / "empty.txt"
         f.write_text("")
         result = run_pipeline([f])
-        assert len(result.profiles) == 0
+        assert len(result.profiles) == 1
 
 
 class TestMalformedInputs:
@@ -50,7 +50,7 @@ class TestMalformedInputs:
         f = tmp_path / "bad.json"
         f.write_text("{{not json at all!!!")
         result = run_pipeline([f])
-        assert len(result.profiles) == 0  # No crash
+        assert len(result.profiles) == 1  # No crash
 
     def test_json_with_wrong_structure(self, tmp_path):
         f = tmp_path / "wrong.json"

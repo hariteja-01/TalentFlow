@@ -13,10 +13,10 @@ class TestPhoneNormalizer:
     """Tests for E.164 phone normalization."""
 
     def test_us_phone_with_parens(self):
-        assert normalize_phone("(415) 555-2671") == "+14155552671"
+        assert normalize_phone("(415) 555-2671", "US") == "+14155552671"
 
     def test_us_phone_with_dashes(self):
-        assert normalize_phone("415-555-2671") == "+14155552671"
+        assert normalize_phone("415-555-2671", "US") == "+14155552671"
 
     def test_us_phone_already_e164(self):
         assert normalize_phone("+14155552671") == "+14155552671"
@@ -38,11 +38,11 @@ class TestPhoneNormalizer:
         assert normalize_phone("not-a-phone") is None
 
     def test_normalize_phones_deduplication(self):
-        result = normalize_phones(["(415) 555-2671", "415-555-2671", "+14155552671"])
+        result = normalize_phones(["(415) 555-2671", "415-555-2671", "+14155552671"], "US")
         assert result == ["+14155552671"]
 
     def test_normalize_phones_drops_invalid(self):
-        result = normalize_phones(["(415) 555-2671", "garbage", ""])
+        result = normalize_phones(["(415) 555-2671", "garbage", ""], "US")
         assert result == ["+14155552671"]
 
 

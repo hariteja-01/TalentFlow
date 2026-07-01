@@ -29,7 +29,7 @@ def normalize_phone(raw: str, default_region: str | None = None) -> str | None:
     if not raw or not raw.strip():
         return None
 
-    region = default_region or os.environ.get("DEFAULT_PHONE_REGION", "US")
+    region = default_region
 
     try:
         parsed = phonenumbers.parse(raw.strip(), region)
