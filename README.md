@@ -9,9 +9,9 @@
 
 ## 🎥 Demo Video
 
-[![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+[![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge)](https://drive.google.com/file/d/11oKqvdQQEKA4uRo-S_bVScSHyZHVOYK2/view?usp=sharing)
 
-*A 2-minute walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
+*A demonstrating the pipeline, custom configs, and key design decisions.*
 
 ## 🔗 Quick Links
 - 🌐 [Live Demo](https://talent-flow-gules.vercel.app/)
