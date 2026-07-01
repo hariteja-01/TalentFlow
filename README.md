@@ -69,7 +69,9 @@ graph TD
 
 TalentFlow processes unstructured and structured data sources into clean, canonical profiles. 
 
-### 1. Sample Inputs (The Messy Data)
+<details>
+<summary><b>1. Sample Inputs (The Messy Data)</b></summary>
+<br>
 
 **Unstructured Resume (PDF/TXT)**
 ```text
@@ -98,8 +100,11 @@ Experienced ML engineer with 7+ years building production machine learning syste
 full_name,email,phone,location,headline,skills
 Jane Doe,jane.doe@email.com,415-555-2671,"San Francisco, California, United States",Machine Learning Engineer,"Python, ML, TF, Docker"
 ```
+</details>
 
-### 2. Sample Output - Default Canonical Schema
+<details>
+<summary><b>2. Sample Output - Default Canonical Schema</b></summary>
+<br>
 
 All of the above sources for Jane Doe are automatically merged into a single, unified canonical profile.
 Notice how the name is resolved to the highest-weight source ("Jane M. Doe" from the ATS), phones are normalized to E.164 (`+14155552671`), skills are canonicalized ("TF" -> "TensorFlow"), and confidence/provenance is calculated.
@@ -134,8 +139,11 @@ Notice how the name is resolved to the highest-weight source ("Jane M. Doe" from
 }
 ```
 *(Note: Excerpted for brevity. The full profile contains exhaustive arrays of skills, experience, education, and provenance tracing for every single field).*
+</details>
 
-### 3. Sample Output - Recruiter View (Custom Config)
+<details>
+<summary><b>3. Sample Output - Recruiter View (Custom Config)</b></summary>
+<br>
 
 Using runtime configs, you can project the canonical profile into whatever schema downstream consumers need. Here is a projection mapped for a hypothetical Recruiter Dashboard using `configs/recruiter_view.json`:
 
@@ -153,6 +161,7 @@ Using runtime configs, you can project the canonical profile into whatever schem
   "is_highly_confident": true
 }
 ```
+</details>
 
 ## 🚀 Quick Start
 
@@ -307,5 +316,3 @@ TalentFlow/
 
 This project was built for the Eightfold Candidate Profile Transformer evaluation.
 Licensed under the [MIT License](LICENSE).
- 
- 
