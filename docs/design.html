@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@page {
+    size: A4;
+    margin: 15mm;
+}
+body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    line-height: 1.15;
+    color: #000;
+}
+h1 {
+    font-size: 14pt;
+    text-align: center;
+    margin-bottom: 2px;
+    margin-top: 0;
+}
+h2 {
+    font-size: 12pt;
+    border-bottom: 1px solid #000;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    padding-bottom: 2px;
+}
+h3 {
+    font-size: 11pt;
+    margin-top: 6px;
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+p, ul {
+    margin-top: 0;
+    margin-bottom: 6px;
+}
+li {
+    margin-bottom: 2px;
+}
+.header {
+    text-align: center;
+    font-size: 11pt;
+    margin-bottom: 10px;
+}
+code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 10pt;
+    background-color: #f4f4f4;
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+b {
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<h1>TalentFlow: Multi-Source Candidate Data Transformer</h1>
+<div class="header">Hari Teja Patnala | patnalahariteja@gmail.com</div>
+
+<h2>1. Pipeline Architecture</h2>
+<p>The system is built as a deterministic, modular 6-stage DAG to ensure traceability and strict error isolation:</p>
+<ul>
+    <li><b>Ingest (Detect):</b> Discovers files in deterministic alphabetical order, validates MIME types, and routes to appropriate parsers.</li>
+    <li><b>Extract:</b> Source-specific parsers extract intermediate data. The ResumeParser uses strict regex and structural cues, prioritizing "honestly-empty" over "wrong-but-confident" by only extracting from designated sections.</li>
+    <li><b>Normalize:</b> Cleans extracted data (e.g., standardizing phones, mapping countries, resolving skill aliases).</li>
+    <li><b>Merge:</b> Resolves identity and merges data across sources using a Union-Find algorithm.</li>
+    <li><b>Confidence Score:</b> Evaluates data completeness, source reliability, and cross-source agreement.</li>
+    <li><b>Project-to-Output (Validate):</b> Reshapes the canonical internal record into a user-defined JSON schema.</li>
+</ul>
+
+<h2>2. Canonical Schema & Normalizations</h2>
+<p>The internal canonical profile provides a strict <code>pydantic.BaseModel</code> structure:</p>
+<ul>
+    <li><code>candidate_id</code> (UUID hash), <code>full_name</code> (String), <code>emails</code> (String Array), <code>links</code> (Object).</li>
+    <li><code>phones</code> (String Array): <b>Normalized</b> via the <code>phonenumbers</code> library to strict E.164 format. Invalid sequences drop out.</li>
+    <li><code>location</code> (Object): <code>{city, region, country}</code>. <b>Normalized</b> by mapping country strings ("UK") to ISO-3166 alpha-2 ("GB").</li>
+    <li><code>experience</code>, <code>education</code>: Dates are <b>Normalized</b> into strict <code>YYYY-MM</code> format using fuzzy parsing.</li>
+    <li><code>skills</code> (Array): <b>Normalized</b> against a canonical alias dictionary (e.g., "js" &rarr; "JavaScript").</li>
+    <li><code>provenance</code> (Array): Tracks lineage <code>{field, source, method}</code> for every canonical data point.</li>
+</ul>
+
+<h2>3. Merge / Conflict-Resolution Policy & Confidence</h2>
+<p><b>Identity Resolution & Conflict Policy:</b> Identity is resolved using a Union-Find graph primarily via <code>emails</code> (and exact name match as fallback). When merging, sources are ranked by structural trustworthiness (JSON [0.9] > CSV [0.7] > PDF [0.65] > GitHub [0.4]). If sources provide conflicting scalar values (e.g., <code>headline</code>), the highest-weight source strictly wins. Array fields (like <code>skills</code>) are unioned and deduplicated.</p>
+<p><b>Confidence Formula:</b> <code>confidence = source_weight &times; completeness &times; agreement_bonus</code>.<br>
+Completeness drops to 0.0 if a field is null/empty. An agreement bonus (1.2x) is applied if &ge; 2 independent sources agree on the exact value. Overall confidence is the arithmetic mean of all field scores.</p>
+
+<h2>4. Runtime Configurable Output (Projection Layer)</h2>
+<p>TalentFlow decouples its internal state from the output shape using a dynamic JSON Projection Config:</p>
+<ul>
+    <li><b>Selection & Remapping:</b> Resolves nested paths via array indexing (<code>"from": "emails[0]"</code> maps to <code>primary_email</code>).</li>
+    <li><b>Format Toggles:</b> Applies per-field normalizations directly at output (e.g., <code>"normalize": "E164"</code>) and toggles features like <code>include_provenance</code>.</li>
+    <li><b>On-Missing Policy:</b> Defines fallback behavior if required data is missing (<code>"null"</code> sets to null, <code>"omit"</code> removes the key entirely, <code>"error"</code> aborts pipeline).</li>
+</ul>
+
+<h2>5. Edge Cases & Scope Exclusions</h2>
+<p><b>Edge Cases Successfully Handled:</b></p>
+<ul>
+    <li><i>Garbage Documents (e.g., Financial Invoices):</i> Strict regex guardrails (requiring headers like "Technical Skills") prevent extracting random fragments. If unsure, the parser yields empty lists rather than false positives.</li>
+    <li><i>GitHub API Rate Limits:</i> If a 403 Rate Limit is hit, the parser implements a cascading fallback to raw HTML scraping to ensure continuous data extraction without crashing.</li>
+    <li><i>Array Access on Empty Arrays:</i> If a user config requests <code>emails[0]</code> but no emails were found, the projection layer gracefully applies the <code>on_missing</code> policy rather than throwing an <code>IndexError</code>.</li>
+</ul>
+<p><b>Deliberately Descoped (Due to Time/Constraints):</b></p>
+<ul>
+    <li><i>Image-only PDF OCR:</i> Excluded heavy dependencies like Tesseract OCR. Pure image PDFs currently return an empty record.</li>
+    <li><i>LLM Extraction:</i> Opted for deterministic regex over generative AI to guarantee zero-latency execution, perfect determinism, and 100% explainability without network dependencies.</li>
+    <li><i>LinkedIn Parsing:</i> Excluded live scraping due to strict ToS blocks and captcha walls on unauthenticated requests.</li>
+</ul>
+
+</body>
+</html>
