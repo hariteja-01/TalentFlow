@@ -7,11 +7,12 @@
   <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Passing">
 </div>
 
-## 🎥 Demo Video
+## 🎥 Eightfold Demo Video Submission
 
-[![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge)](https://drive.google.com/file/d/11oKqvdQQEKA4uRo-S_bVScSHyZHVOYK2/view?usp=sharing)
+<video src="https://github.com/hariteja-01/TalentFlow/raw/main/docs/Eightfold_Demo_Video_Submission.mp4" controls="controls" width="100%">
+</video>
 
-*A demonstrating the pipeline, custom configs, and key design decisions.*
+*A complete walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
 
 ## 🔗 Quick Links
 - 🌐 [Live Demo](https://talent-flow-gules.vercel.app/)
