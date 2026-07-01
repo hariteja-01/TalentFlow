@@ -7,12 +7,6 @@
   <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Passing">
 </div>
 
-## 🎥 Eightfold Demo Video Submission
-
-https://github.com/hariteja-01/TalentFlow/raw/main/docs/Eightfold_Demo_Video_Submission.mp4
-
-*A complete walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
-
 ## 🔗 Quick Links
 - 🌐 [Live Demo](https://talent-flow-gules.vercel.app/)
 - 📂 [GitHub Repository](https://github.com/hariteja-01/TalentFlow)
@@ -316,3 +310,11 @@ TalentFlow/
 
 This project was built for the Eightfold Candidate Profile Transformer evaluation.
 Licensed under the [MIT License](LICENSE).
+
+---
+
+## 🎥 Eightfold Demo Video Submission
+
+[![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge)](https://drive.google.com/file/d/11oKqvdQQEKA4uRo-S_bVScSHyZHVOYK2/view?usp=sharing)
+
+*A complete walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
