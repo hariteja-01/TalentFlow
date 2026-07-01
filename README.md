@@ -7,12 +7,12 @@
   <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build Passing">
 </div>
 
-## 🔗 Quick Links
+## Quick Links
 - 🌐 [Live Demo](https://talent-flow-gules.vercel.app/)
 - 📂 [GitHub Repository](https://github.com/hariteja-01/TalentFlow)
 - 📄 [Stage 1 Design Document (PDF)](docs/HariTeja_patnalahariteja_Eightfold.pdf)
 
-## 🏗 System Architecture & End-to-End Pipeline Flow
+## System Architecture & End-to-End Pipeline Flow
 
 TalentFlow employs a strict, unidirectional, multi-stage pipeline architecture. This functional approach ensures traceability, testability, and guarantees that errors in one document never poison the pipeline.
 
@@ -45,7 +45,7 @@ graph TD
     G --> H
 ```
 
-## ✨ Key Features
+## Key Features
 
 - **Multi-Source Ingestion**: Unifies ATS JSON, HRIS CSVs, PDF/DOCX Resumes, and GitHub API data.
 - **Identity Resolution**: Resolves candidate duplicates deterministically using Union-Find via exact email matching.
@@ -53,13 +53,13 @@ graph TD
 - **Robust Error Handling**: Never crashes on malformed files, gracefully skips and warns.
 - **Beautiful Web Interface**: Modern, responsive interface to easily visualize transformed data.
 
-## 📸 Screenshots
+## Screenshots
 
 | Landing & Upload | Unified Profile Results |
 |:---:|:---:|
 | ![Landing Page](docs/images/landing.png) | ![Results Page](docs/images/results.png) |
 
-## 📥 Sample Inputs & Outputs
+## Sample Inputs & Outputs
 
 TalentFlow processes unstructured and structured data sources into clean, canonical profiles. 
 
@@ -157,7 +157,7 @@ Using runtime configs, you can project the canonical profile into whatever schem
 ```
 </details>
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.11 or higher
@@ -210,11 +210,11 @@ python -m api.index
 # View unified canonical profiles
 ```
 
-## 💡 Project Motivation
+## Project Motivation
 
 TalentFlow was built to satisfy the Eightfold Candidate Profile Transformer problem statement, emphasizing deterministic merging, robust error boundaries, strict validation, and a beautiful, accessible web interface.
 
-## 🛡️ Edge Cases Handled
+## Edge Cases Handled
 
 This system gracefully handles numerous edge cases per the "robust" requirement:
 
@@ -231,20 +231,20 @@ This system gracefully handles numerous edge cases per the "robust" requirement:
 
 **Philosophy**: "Wrong-but-confident is worse than honestly-empty" - we return null rather than guess.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Backend / Pipeline**: Python 3.11+, Pydantic (data models), PyMuPDF (PDF extraction), python-docx (DOCX extraction), phonenumbers (normalization).
 - **Web Interface**: FastAPI, Uvicorn, Vanilla JS, HTML/CSS.
 - **Testing**: Pytest, Pytest-Cov.
 
-## 🧪 Testing
+## Testing
 
 Run the test suite using pytest:
 ```bash
 pytest tests/ -v --cov=src
 ```
 
-## 📋 Assumptions
+## Assumptions
 
 1. **Source Priority**: When sources conflict, priority is: ATS JSON (0.9) > CSV (0.7) > PDF Resume (0.65) > GitHub API (0.4).
 2. **Email-Based Identity**: Primary matching key is email address; name similarity is fallback.
@@ -254,7 +254,7 @@ pytest tests/ -v --cov=src
 6. **Deterministic Processing**: Files processed in sorted order to ensure same inputs → same outputs.
 7. **Conservative Extraction**: When document structure unclear, return empty/null rather than guess.
 
-## ⚠️ Deliberately Descoped
+## Deliberately Descoped
 
 Under time constraints, the following were intentionally left out:
 
@@ -267,12 +267,12 @@ Under time constraints, the following were intentionally left out:
 7. **Advanced Resume Formats**: Handles standard resume layouts; complex multi-column or table-heavy resumes may extract incorrectly.
 8. **Internationalization**: Phone normalization assumes common formats; exotic international formats may fail.
 
-## 📄 Documentation
+## Documentation
 
 - **[Stage 1 Design Document (PDF)](docs/HariTeja_patnalahariteja_Eightfold.pdf)** - Technical design covering pipeline architecture, merge policy, confidence scoring, and edge cases.
 - **[Architecture Diagrams](docs/images/)** - Visual pipeline flow and system architecture.
 
-## 🔒 Security Considerations
+## Security Considerations
 
 TalentFlow handles PII (Personally Identifiable Information) and takes security seriously:
 - **Path Traversal Prevention**: Filenames uploaded via the API are strictly sanitized using regex allow-lists before being written to the temporary filesystem.
@@ -280,7 +280,7 @@ TalentFlow handles PII (Personally Identifiable Information) and takes security 
 - **Zero-Byte & Billion-Laughs Defenses**: Limits are placed on upload payload sizes, and empty or corrupted files are caught instantly before parsing engines allocate memory.
 - **CORS Protection & DOM Sanitization**: The FastAPI backend is configured with strict CORS rules. The frontend UI uses an `escapeHtml` utility function to mitigate XSS attacks during profile rendering.
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 TalentFlow/
@@ -298,7 +298,7 @@ TalentFlow/
 └── tests/                # Pytest test suite
 ```
 
-## 🔮 Future Improvements
+## Future Improvements
 
 1. **LLM Integration**: Replace regex extractors with structured LLM parsing for resumes with non-standard layouts.
 2. **Database Backend**: Introduce SQLAlchemy for persisting profiles in PostgreSQL.
@@ -306,14 +306,14 @@ TalentFlow/
 4. **WebSocket Progress Updates**: Provide real-time UI feedback for bulk file uploads.
 5. **Async Processing**: Use Celery/Redis for background processing of large batches.
 
-## 📜 License
+## License
 
 This project was built for the Eightfold Candidate Profile Transformer evaluation.
 Licensed under the [MIT License](LICENSE).
 
 ---
 
-## 🎥 Eightfold Demo Video Submission
+## Eightfold Demo Video Submission
 
 [![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge)](https://drive.google.com/file/d/11oKqvdQQEKA4uRo-S_bVScSHyZHVOYK2/view?usp=sharing)
 
