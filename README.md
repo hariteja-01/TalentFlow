@@ -316,3 +316,5 @@ TalentFlow/
 
 This project was built for the Eightfold Candidate Profile Transformer evaluation.
 Licensed under the [MIT License](LICENSE).
+ 
+ 
