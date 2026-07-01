@@ -9,8 +9,7 @@
 
 ## 🎥 Eightfold Demo Video Submission
 
-<video src="https://github.com/hariteja-01/TalentFlow/raw/main/docs/Eightfold_Demo_Video_Submission.mp4" controls="controls" width="100%">
-</video>
+https://github.com/hariteja-01/TalentFlow/raw/main/docs/Eightfold_Demo_Video_Submission.mp4
 
 *A complete walkthrough demonstrating the pipeline, custom configs, and key design decisions.*
 
